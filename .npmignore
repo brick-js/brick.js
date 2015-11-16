@@ -1,5 +1,6 @@
-.DS_Store
 node_modules
+.git
 .*.swp
 .idea
+.DS_Store
 *.log
