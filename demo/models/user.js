@@ -4,7 +4,7 @@ var users = {},
     defaultUser = {
         id: null,
         name: 'alice',
-        description: 'Nulla facilisi. Cras id magna. Nunc pharetra velit vitae eros.',
+        description: 'Vestibulum in pede adipiscing mi dapibus condimentum. Etiam felis risus, condimentum in, malesuada eget, pretium ut, sapien.  Suspendisse placerat lectus.' 
     };
 
 function User(obj) {
@@ -39,6 +39,9 @@ exports.update = function(id, user) {
     return _.merge(users[id], user);
 };
 
-exports.create({name: 'Alice', description: 'I am the current user'});
-exports.create({name: 'Harttle', description: 'I am the current user'});
-exports.create({name: 'Bob', description: 'I am the current user'});
+exports.create({name: 'Alice'});
+exports.create({name: 'Bob'});
+exports.create({name: 'Charlie'});
+exports.create({name: 'Dave'});
+exports.create({name: 'Eve'});
+exports.create({name: 'Frank'});

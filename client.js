@@ -3,26 +3,28 @@
 window.brk = {};
 
 $(function() {
-    var mark = {};
+    var enabled = {};
     $('.brk').each(function(i, ele) {
         var mod = $(ele).data('brk');
-        if (mark[mod]) return;
-        mark[mod] = true;
+
+        if(enabled[mod]) return;
+        else enabled[mod] = true;
 
         var ctrl = window.brk[mod];
         if (typeof ctrl !== 'function') return;
 
-        ctrl(brkFor(mod), conslFor(mod));
+        console.log('[brick]', 'loading', mod);
+        ctrl(brkFactory(mod), conslFactory(mod));
     });
 
-    function brkFor(mod) {
+    function brkFactory(mod) {
         return {
             name: mod,
             $element: $('[data-brk=' + mod + ']')
         };
     }
 
-    function conslFor(mod) {
+    function conslFactory(mod) {
         return {
             log: console.log.bind(console, '[' + mod + ']'),
             info: console.info.bind(console, '[' + mod + ']'),

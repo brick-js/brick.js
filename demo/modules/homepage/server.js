@@ -6,6 +6,6 @@ exports.url = ['/', '/homepage'];
 exports.view = function(req, res, next){
     debug('enter view controller');
     res.render({
-        title: 'Demo Homepage'
+        title: 'Brick.js Demo'
     });
 };

@@ -1,25 +1,25 @@
 var path = require('path');
 var fs = require('fs');
-var debug = require('debug')('brick-static');
 var less = require('less');
 var util = require('util');
 var _ = require('lodash');
-var cssComment = '/* brick.js module: %s */\n';
-var jsComment = '// brick.js module: %s\n';
-var brkLoader = fs.readFileSync(path.resolve(__dirname, 'client.js'), 'utf8');
 var changeCase = require('change-case');
+var debug = require('debug')('brick-static');
+var brkLoader = fs.readFileSync(path.resolve(__dirname, 'client.js'), 'utf8');
 
 var defaultConfig = {
     root: __dirname,
     css: {
         url: '/css/index.css',
         compress: false,
-        file: 'index.css'
+        file: 'index.css',
+        comment: '/* brick.js module: %s */\n'
     },
     js: {
         url: '/js/index.js',
         compress: false,
-        file: 'client.js'
+        file: 'client.js',
+        comment: '// brick.js module: %s\n'
     }
 };
 
@@ -28,15 +28,6 @@ function Static(config) {
     this.root = config.root;
     this.modules = [];
 }
-
-Static.prototype.readModule = function(css, js, dir) {
-    var pcss = readFile(path.join(this.root, dir, this.config.css.file));
-    var pjs = readFile(path.join(this.root, dir, this.config.js.file));
-
-    return Promise
-        .all([safePromise(css, pcss), safePromise(js, pjs)])
-        .then(_.spread(_.partial(parseModule, dir)));
-};
 
 Static.prototype.load = function(css, js) {
     debug('loading ' + (css && 'css ' || '') + (js && 'js ' || '') + ': ' + this.root);
@@ -53,39 +44,52 @@ Static.prototype.load = function(css, js) {
         });
 };
 
-Static.prototype.getCss = function(modules) {
-    modules = modules || this.modules;
-    var src = modules.reduce(function(res, module) {
-        return res + lessForModule(module);
-    }, '');
-    return compileLess(src, {
-        compress: this.config.css.compress
-    });
-};
-
 Static.prototype.css = function() {
     return this.load(true, false).then(this.getCss.bind(this));
-};
-
-Static.prototype.getJs = function(modules) {
-    modules = modules || this.modules;
-    return modules.reduce(function(res, module) {
-        return res + jsForModule(module);
-    }, brkLoader);
 };
 
 Static.prototype.js = function() {
     return this.load(false, true).then(this.getJs.bind(this));
 };
 
-function jsForModule(module) {
-    var comment = util.format(jsComment, module.name);
+Static.prototype.readModule = function(css, js, dir) {
+    var pcss = readFile(path.join(this.root, dir, this.config.css.file));
+    var pjs = readFile(path.join(this.root, dir, this.config.js.file));
+
+    return Promise
+        .all([safePromise(css, pcss), safePromise(js, pjs)])
+        .then(_.spread(_.partial(parseModule, dir)));
+};
+
+Static.prototype.getCss = function(modules) {
+    modules = modules || this.modules;
+    var comment = this.config.css.comment,
+        src = modules.reduce(function(res, module) {
+            return res + lessForModule(module, comment);
+        }, '');
+    return compileLess(src, {
+        compress: this.config.css.compress
+    });
+};
+
+Static.prototype.getJs = function(modules) {
+    modules = modules || this.modules;
+    var comment = this.config.js.comment;
+    return modules.reduce(function(res, module) {
+        return res + jsForModule(module, comment);
+    }, brkLoader);
+};
+
+function jsForModule(module, commentFormat) {
+    if(!module.js) return '';
+    var comment = util.format(commentFormat, module.name);
     return util.format('%swindow.brk.%s=function(brk, console){\n%s}\n\n',
         comment, module.name, module.js);
 }
 
-function lessForModule(module) {
-    var comment = util.format(cssComment, module.name),
+function lessForModule(module, commentFormat) {
+    if(!module.css) return '';
+    var comment = util.format(commentFormat, module.name),
         className = changeCase.paramCase(module.name);
     return util.format('%s\n.brk-%s{\n%s\n}',
         comment, className, module.css);

@@ -27,6 +27,7 @@ Router.prototype.mountModules = function(modules) {
     return this.router;
 };
 
+// TODO: refactor render process to render(mod, locals)
 Router.prototype.mountModule = function(mod) {
     if (!mod.url || !mod.view) return ;
     debug('mounting ' + mod.name + ': ' + mod.url);
