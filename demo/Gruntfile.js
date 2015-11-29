@@ -19,9 +19,6 @@ module.exports = function(grunt) {
             },
         },
         watch: {
-            options: {
-                livereload: true
-            },
             express: {
                 files: ['../**/*.js'],
                 tasks: ['express:dev'],
@@ -31,13 +28,16 @@ module.exports = function(grunt) {
             },
             grunt:{
                 files: ['Gruntfile.js'],
-                tasks: ['env:dev'],
+                tasks: ['dev'],
                 options: {
                     reload: true
                 }
             },
             client:{
-                files: ['**/*.html']
+                files: ['**/*.html', '**/client.js', '**/*.css', '*.pid'],
+                options: {
+                    livereload: 35728
+                }
             }
         }
     });

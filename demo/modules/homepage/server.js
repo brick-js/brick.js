@@ -3,9 +3,7 @@ var Cat = require('../../models/cat.js');
 var debug = require('debug')('demo:homepage');
 
 exports.url = ['/', '/homepage'];
-exports.view = function(req, res, next){
+exports.resolver = function(req, done, fail){
     debug('enter view controller');
-    res.render({
-        title: 'Brick.js Demo'
-    });
+    done({ title: 'Brick.js Demo' });
 };

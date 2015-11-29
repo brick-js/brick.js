@@ -12,15 +12,6 @@ function canRead(filepath) {
     }
 }
 
-function readFileSafe(filepath) {
-    try {
-        return fs.readFileSync(filepath);
-    }
-    catch (e) {
-        return '';
-    }
-}
-
 function resolvePath(dir, filename) {
     return path.resolve(path.join(dir, filename));
 }
@@ -37,7 +28,6 @@ function subDirectories(dir) {
 
 module.exports = {
     canRead: canRead,
-    readFileSafe: readFileSafe,
     resolvePath: resolvePath,
     subDirectories: subDirectories
 };

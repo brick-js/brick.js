@@ -2,6 +2,8 @@
 
 var app = require('../app');
 var http = require('http');
+var fs = require('fs');
+var debug = require('debug')('brick:www');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -42,4 +44,8 @@ function onListening() {
         'pipe ' + addr :
         'port ' + addr.port;
     console.log('Listening on ' + bind);    // log sth to notify grunt-watch
+
+    fs.writeFile('./app.pid', process.pid.toString(), function(err) {
+        if (err) debug('log pid error:', err);
+    });
 }

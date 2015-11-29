@@ -1,9 +1,7 @@
 var User = require('../../models/user.js');
 var debug = require('debug')('demo:user-list');
 
-exports.view = function(req, res, next){
+exports.resolver = function(req, done, fail){
     debug('enter view controller');
-    res.render({
-        users: User.query()
-    });
+    done({ users: User.query() });
 };

@@ -11,6 +11,7 @@ Clone this repo, install dependencies, and run grunt from `demo/` directory.
 
 ```bash
 git clone git@github.com:harttle/brick.js.git && npm install
+cd brick.js && npm install
 cd demo && npm install
 grunt
 ```
