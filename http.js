@@ -1,7 +1,7 @@
-function send(res, type, content) {
+function send(res, type, status, content) {
     res
         .set('Content-Type', type)
-        .status(200)
+        .status(status)
         .end(new Buffer(content));
 }
 

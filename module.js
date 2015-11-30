@@ -1,26 +1,24 @@
 var file = require('./file');
 var serverFileName = 'server.js';
 var clientFileName = 'client.js';
-var tplFileName = 'index.html';
+var tplBaseName = 'index';
 var changeCase = require('change-case');
 var _ = require('lodash');
 var debug = require('debug')('brick:module');
 var Render = require('./render');
 
-var modules = {};
-var count = 0;
 var defaultResolver = (req, done, fail) => done({});
 
 function Module(config) {
     debug('init module:', config.name);
 
     this.config = config;
-    this.hash = count++;
+    this.hash = Module.count++;
     this.name = this.id = changeCase.camelCase(config.name);
-    modules[this.id] = this;
+    Module.modules[this.id] = this;
 
     this.serverPath = file.resolvePath(config.path, serverFileName);
-    this.tplPath = config.name + '/' + tplFileName;
+    this.tplPath = config.name + '/' + tplBaseName + Module.config.engine.tplExt;
 
     if (file.canRead(this.serverPath)) {
         var server = require(this.serverPath) || {};
@@ -43,9 +41,7 @@ Module.prototype.ctrl = function(req, ctx) {
         };
     return this.context(req)
         .then(localCtx => render.render(
-            this.tplPath,
-            _.defaults(localCtx, ctx),
-            pctrl))
+            this.tplPath, _.defaults(localCtx, ctx), pctrl))
         .then(_.partial(Render.shared().modularize, this));
 };
 
@@ -54,19 +50,24 @@ Module.prototype.context = function(req) {
     return new Promise(_.partial(this.resolver, req));
 };
 
-Module.get = mid => modules[changeCase.camelCase(mid)];
+Module.get = mid => Module.modules[changeCase.camelCase(mid)];
 
 Module.factory = function(config) {
     return new Module(config);
 };
 
-Module.load = function(path) {
-    debug('loading modules:', path);
-    modules = {};
-    count = 0;
-    file.subDirectories(path).forEach(Module.factory);
-    debug(count, 'modules loaded');
-    return modules;
+Module.load = function(config) {
+    debug('loading modules:', config.root);
+    Module.config = config;
+    Module.modules = {};
+    Module.count = 0;
+    file.subDirectories(config.root).forEach(Module.factory);
+    debug(Module.count, 'modules loaded');
+
+    if(!Module.modules['error']){
+        throw new Error('error module not specified!');
+    }
+    return Module.modules;
 };
 
 module.exports = Module;

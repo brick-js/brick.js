@@ -9,16 +9,12 @@ var sharedRender = null;
 
 function Render(config) {
     this.config = config;
+    this.engine = config.engine;
 }
 
 Render.prototype.render = function(tplPath, ctx, pctrl){
-    ctx.render = pctrl;
-
-    return new Promise((resolve, reject) =>
-        this.config.render(tplPath, ctx, (err, html) =>
-            err ?  reject(err) : resolve(html)
-        )
-    );
+    tplPath = path.resolve(this.config.root, tplPath);
+    return this.engine.render(tplPath, ctx, pctrl);
 };
 
 Render.prototype.modularize = function(mod, html){

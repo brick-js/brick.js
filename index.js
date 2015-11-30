@@ -6,8 +6,10 @@ var debug = require('debug')('brick:index');
 var Sttc = require('./static');
 var Render = require('./render');
 
-var defaultExternalRender = (tpl, locals, cb) =>
-    cb(new Error('render engine not set'));
+var defaultEngine = {
+    tplExt: '.html',
+    render: (tpl, locals, cb) => cb(new Error('ENOENGINE'))
+};
 
 var defaultConfig = {
     root: __dirname,
@@ -21,13 +23,13 @@ var defaultConfig = {
         compress: false,
         file: 'client.js'
     },
-    render: defaultExternalRender
+    engine: defaultEngine
 };
 
 function Brick(config) {
     this.config = config;
     this.render = Render.create(config);
-    this.modules = Module.load(config.root);
+    this.modules = Module.load(config);
     this.router = Router(config);
     this.router
         .mountStatic(Sttc(config))
@@ -36,5 +38,7 @@ function Brick(config) {
 }
 
 module.exports = function(config) {
-    return new Brick(_.defaultsDeep(config, defaultConfig));
+    var config = _.defaultsDeep(config || {}, defaultConfig)
+    config.engine.root = config.root;
+    return new Brick(config);
 };

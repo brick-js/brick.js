@@ -14,15 +14,13 @@ function Static(config) {
 
 Static.prototype.expressJs = function(req, res, next) {
     bs.js()
-        .then(_.partial(http.send,
-            res, 'application/javascript'))
+        .then(_.partial(http.send, res, 'application/javascript', 200))
         .catch(next);
 };
 
 Static.prototype.expressCss = function(req, res, next) {
     bs.css()
-        .then(_.partial(http.send, 
-            res, 'text/css'))
+        .then(_.partial(http.send, res, 'text/css', 200))
         .catch(next);
 };
 
