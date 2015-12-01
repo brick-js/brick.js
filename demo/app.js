@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var brickJs = require('..');
 var apis = require('./apis');
-var hbs = require('../brick-hbs');
+var hbs = require('brick-hbs');
 var debug = require('debug')('demo:app');
 
 var app = express();
