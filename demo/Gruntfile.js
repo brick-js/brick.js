@@ -23,12 +23,13 @@ module.exports = function(grunt) {
                 files: ['../**/*.js'],
                 tasks: ['express:dev'],
                 options: {
-                    spawn: false
+                    spawn: false,
+                    livereload: 35728
                 }
             },
             grunt:{
                 files: ['Gruntfile.js'],
-                tasks: ['dev'],
+                tasks: ['env:dev', 'express:dev'],
                 options: {
                     reload: true
                 }

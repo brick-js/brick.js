@@ -8,15 +8,21 @@ var defaultOptions = {
     tplExt: '.html'
 };
 
+function RenderInfo(id, html) {
+    this.id = id;
+    this.html = html;
+}
+
 function BrickHbs(render) {
     this.render = render;
-    this.pendings = [];
+    this.children = [];
+    this.parent = undefined;
 }
 
 BrickHbs.prototype.pending = function() {
     var pendingTable = {};
-    return Promise.all(this.pendings).then(results => {
-        results.forEach(result => pendingTable[result.key] = result.val);
+    return Promise.all(this.children).then(results => {
+        results.forEach(info => pendingTable[info.id] = info.html);
         return pendingTable;
     });
 };
@@ -28,11 +34,11 @@ function Brick(config) {
 }
 
 Brick.prototype.render = function(tplPath, ctx, pctrl) {
+    ctx = ctx || {};
     ctx.brkhbs = new BrickHbs(pctrl);
     return this.getTpl(tplPath).then(tpl => link(tpl, ctx));
 };
 
-// from cache or source
 Brick.prototype.getTpl = function(tplPath) {
     if (this.config.cache) {
         var tpl = this.cache[tplPath];
@@ -43,23 +49,34 @@ Brick.prototype.getTpl = function(tplPath) {
         .then(tpl => this.cache[tplPath] = tpl);
 };
 
-function link(tpl, ctx) {
-    var html = tpl(ctx);
-    return ctx.brkhbs.pending().then(linkTable => {
-        return html.replace(/hbs-pending-(\d+)/g, (expr, name) => linkTable[name]);
-    });
-}
-
-Handlebars.registerHelper('include', function(mid, options) {
-    debug('include: ' + mid);
+Handlebars.registerHelper('include', function(mid, context, options) {
+    if (arguments.length < 3) {
+        options = context;
+        context = null;
+    }
+    context = _.merge({}, this, context, options.hash);
     var brkhbs = options.data.root.brkhbs,
-        count = brkhbs.pendings.length;
-    brkhbs.pendings.push(brkhbs.render(mid, this)
-        .then(html => ({
-            key: count,
-            val: html
-        })));
-    return `hbs-pending-${count}`;
+        id = uuid(),
+        p = brkhbs.render(mid, context).then(html => ({
+            id, html
+        }));
+    brkhbs.children.push(p);
+    return `hbs-pending-${id}`;
+});
+
+Handlebars.registerHelper('extend', function(mid, context, options) {
+    if (arguments.length < 3) {
+        options = context;
+        context = null;
+    }
+    context = _.merge({}, this, context, options.hash);
+    var brkhbs = options.data.root.brkhbs;
+    brkhbs.parent = brkhbs.render(mid, context);
+    return '';
+});
+
+Handlebars.registerHelper('block', function() {
+    return 'hbs-pending-block';
 });
 
 function readFile(file) {
@@ -70,5 +87,22 @@ function readFile(file) {
     });
 }
 
+function link(tpl, ctx) {
+    var html = tpl(ctx),
+        hbs = ctx.brkhbs;
+    return hbs.pending()
+        .then(lktbl =>
+            html.replace(/hbs-pending-(\d+)/g, (expr, name) => lktbl[name]))
+        .then(html => hbs.parent ?
+            hbs.parent.then(phtml => phtml.replace('hbs-pending-block', html)) :
+            html
+        );
+}
+
+function uuid() {
+    return Math.random().toString(10).substr(2);
+}
+
 Handlebars.brick = config => new Brick(_.defaults(config || {}, defaultOptions));
 module.exports = Handlebars;
+

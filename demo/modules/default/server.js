@@ -1,8 +1,7 @@
 var User = require('../../models/user.js');
 var Cat = require('../../models/cat.js');
-var debug = require('debug')('demo:homepage');
+var debug = require('debug')('demo:default');
 
-exports.url = ['/', '/homepage'];
 exports.resolver = function(req, done, fail){
-    done();
+    done({ title: 'Brick.js Demo' });
 };
