@@ -1,27 +1,27 @@
 var file = require('./file');
-var serverFileName = 'server.js';
-var clientFileName = 'client.js';
-var tplBaseName = 'index';
+var path = require('path');
 var changeCase = require('change-case');
 var _ = require('lodash');
 var debug = require('debug')('brick:module');
 var Render = require('./render');
-
 var defaultResolver = (req, done, fail) => done({});
 
-function Module(config) {
-    debug('init module:', config.name);
+function Module(name) {
+    debug('init module:', name);
 
-    this.config = config;
+    this.file = name;
     this.hash = Module.count++;
-    this.name = this.id = changeCase.camelCase(config.name);
+    this.id = changeCase.camelCase(name);
+    this.utime = {};    // update time
     Module.modules[this.id] = this;
 
-    this.serverPath = file.resolvePath(config.path, serverFileName);
-    this.tplPath = config.name + '/' + tplBaseName + Module.config.engine.tplExt;
+    this.svrPath = path.resolve(Module.config.root, this.file, Module.config.path.svr);
+    this.tplPath = path.resolve(Module.config.root, this.file, Module.config.path.tpl);
+    this.cltPath = path.resolve(Module.config.root, this.file, Module.config.path.clt);
+    this.cssPath = path.resolve(Module.config.root, this.file, Module.config.path.css);
 
-    if (file.canRead(this.serverPath)) {
-        var server = require(this.serverPath) || {};
+    if (file.canRead(this.svrPath)) {
+        var server = require(this.svrPath) || {};
         this.url = server.url; // Express url format
         this.resolver = server.resolver; // Function(req, done, fail)
     }
@@ -52,8 +52,8 @@ Module.prototype.context = function(req) {
 
 Module.get = mid => Module.modules[changeCase.camelCase(mid)];
 
-Module.factory = function(config) {
-    return new Module(config);
+Module.factory = function(name) {
+    return new Module(name);
 };
 
 Module.load = function(config) {
@@ -62,11 +62,8 @@ Module.load = function(config) {
     Module.modules = {};
     Module.count = 0;
     file.subDirectories(config.root).forEach(Module.factory);
-    debug(Module.count, 'modules loaded');
+    debug(Module.count + ' modules loaded');
 
-    if(!Module.modules['error']){
-        throw new Error('error module not specified!');
-    }
     return Module.modules;
 };
 

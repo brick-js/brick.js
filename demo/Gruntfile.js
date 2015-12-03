@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         env: {
             dev: {
                 NODE_ENV: 'development',
-                DEBUG: 'brick:*,brick-hbs:*,brick-static,demo:*'
+                DEBUG: 'brick:*,brick-hbs:*,demo:*'
             }
         },
         express: {

@@ -1,33 +1,46 @@
 var fs = require('fs');
-var path   = require('path');
+var path = require('path');
 var debug = require('debug')('brick:file');
 
 function canRead(filepath) {
-    try{
+    try {
         fs.accessSync(filepath, fs.R_OK);
         return true;
-    }
-    catch(e){
+    } catch (e) {
         return false;
     }
 }
 
-function resolvePath(dir, filename) {
-    return path.resolve(path.join(dir, filename));
+function stat(path) {
+    return new Promise((res, rej) => {
+        fs.stat(path, (e, stats) => e ? rej(e) : res(stats));
+    });
+}
+
+function read(filename) {
+    return new Promise((res, rej) =>
+        fs.readFile(filename, 'utf8', (e, data) => e ? rej(e) : res(data)));
+}
+
+function write(filename, data) {
+    return new Promise((res, rej) =>
+        fs.writeFile(filename, data, 'utf8', e => e ? rej(e) : res()));
 }
 
 function subDirectories(dir) {
     var ret = [];
-    fs.readdirSync(dir).forEach(function (entry) {
+    fs.readdirSync(dir).forEach(function(entry) {
         var filepath = path.resolve(path.join(dir, entry));
         var stats = fs.statSync(filepath);
-        if(stats.isDirectory()) ret.push({path: filepath, name: entry});
+        if (stats.isDirectory()) ret.push(entry);
     });
     return ret;
 }
 
 module.exports = {
-    canRead: canRead,
-    resolvePath: resolvePath,
-    subDirectories: subDirectories
+    canRead,
+    subDirectories,
+    stat,
+    read,
+    write
 };

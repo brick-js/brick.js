@@ -17,21 +17,17 @@ Router.prototype.get = function(){
 
 Router.prototype.mountStatic = function(sttc){
     var cfg = this.config;
-    debug('mounting static: ' + cfg.css.url + ',' + cfg.js.url);
-
-    this.expressRouter.get(cfg.js.url, sttc.expressJs);
-    this.expressRouter.get(cfg.css.url, sttc.expressCss);
-    return this;
+    debug('mounting static: ' + cfg.static.css.url + ', ' + cfg.static.js.url);
+    this.expressRouter.use(sttc);
 };
 
 Router.prototype.mountModules = function(modules){
     _.forOwn(modules, this.mountModule, this);
-    return this;
 };
 
 Router.prototype.mountModule = function(mod){
     if (!mod.url) return;
-    debug(`mounting ${mod.name}: ${mod.url}`);
+    debug(`mounting ${mod.id} at ${mod.url}`);
 
     this.expressRouter.get(mod.url, (req, res, next) => mod.ctrl(req)
         .then(html => Render.shared().linkStatic(html))
@@ -40,7 +36,7 @@ Router.prototype.mountModule = function(mod){
     );
 };
 
-Router.prototype.errorHandlers = function(){
+Router.prototype.mountErrorHandlers = function(){
     // catch 404 
     this.expressRouter.use(function(req, res, next) {
         var err = new Error('Not Found');
@@ -48,18 +44,23 @@ Router.prototype.errorHandlers = function(){
         next(err);
     });
 
-    // error handlers
+    // customized error page
     this.expressRouter.use(function(err, req, res, next) {
         debug(err.stack);
 
         var mod = Module.get('error');
+        if(!mod) return next(err);
+
         mod.ctrl(req, {error: err})
             .then(html => Render.shared().linkStatic(html))
             .then(_.partial(http.send, res, 'text/html', err.status || 500))
-            .catch(function(e){
-                debug('untreated error');
-                debug(e);
-            });
+            .catch(next);
+    });
+
+    // default error handler
+    this.expressRouter.use(function(err, req, res, next) {
+        var html = `<pre><code>${err.stack}</code></pre>`;
+        http.send(res, 'text/html', err.status || 500, html);
     });
 };
 

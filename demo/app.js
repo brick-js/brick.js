@@ -4,8 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var brickJs = require('..');
 var apis = require('./apis');
+var brickJs = require('..');
 var hbs = require('brick-hbs');
 var debug = require('debug')('demo:app');
 
@@ -22,10 +22,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var brk = brickJs({
     root: path.join(__dirname, 'modules'),
-    render: app.render.bind(app),
     engine: hbs.brick({
         cache: false
-    })
+    }),
+    static: {
+        css: {
+            url: '/brick.js/site.css',
+            file: path.resolve(__dirname, '.build/site.css'),
+            comment: '/* brick.js module: %s */'
+        },
+        js: {
+            url: '/brick.js/site.js',
+            file: path.resolve(__dirname, '.build/site.js'),
+            comment: '// brick.js module: %s'
+        }
+    }
 });
 
 app.use('/api', apis);

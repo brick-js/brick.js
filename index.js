@@ -1,44 +1,56 @@
 var Module = require('./module');
 var file = require('./file');
+var path = require('path');
 var _ = require('lodash');
 var Router = require('./router');
 var debug = require('debug')('brick:index');
-var Sttc = require('./static');
+var Static = require('./static');
 var Render = require('./render');
 
 var defaultEngine = {
-    tplExt: '.html',
-    render: (tpl, locals, cb) => cb(new Error('ENOENGINE'))
+    render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))
 };
 
 var defaultConfig = {
-    root: __dirname,
-    css: {
-        url: '/css/index.css',
-        compress: false,
-        file: 'index.css'
+    root: path.join(__dirname, 'modules'),
+    engine: defaultEngine,
+    path: {
+        svr: 'server.js',
+        css: 'index.css',
+        clt: 'client.js',
+        tpl: 'index.html'
     },
-    js: {
-        url: '/js/index.js',
-        compress: false,
-        file: 'client.js'
-    },
-    engine: defaultEngine
+    static: {
+        css: {
+            url: '/brick.js/index.css',
+            file: false,
+            comment: '/* brick.js module: %s */'
+        },
+        js: {
+            url: '/brick.js/index.js',
+            file: false,
+            comment: '// brick.js module: %s'
+        }
+    }
 };
 
 function Brick(config) {
     this.config = config;
     this.render = Render.create(config);
     this.modules = Module.load(config);
+
+    this.static = Static(_.defaults(config, {modules: this.modules}));
     this.router = Router(config);
-    this.router
-        .mountStatic(Sttc(config))
-        .mountModules(this.modules);
+
+    this.router.mountModules(this.modules);
+    this.router.mountStatic(this.static.express());
+    this.router.mountErrorHandlers();
+
     this.express = this.router.get();
 }
 
 module.exports = function(config) {
-    var config = _.defaultsDeep(config || {}, defaultConfig)
-    config.engine.root = config.root;
+    config = _.defaultsDeep(config || {}, defaultConfig);
     return new Brick(config);
 };
+

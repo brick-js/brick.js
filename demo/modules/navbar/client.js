@@ -1,1 +1,1 @@
-console.log('Sth. logged from module', brk.name);
+console.log('My name is:' + mod.name);

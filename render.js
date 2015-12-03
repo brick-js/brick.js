@@ -13,7 +13,6 @@ function Render(config) {
 }
 
 Render.prototype.render = function(tplPath, ctx, pctrl){
-    tplPath = path.resolve(this.config.root, tplPath);
     return this.engine.render(tplPath, ctx, pctrl);
 };
 
@@ -23,17 +22,21 @@ Render.prototype.modularize = function(mod, html){
         ele = $('div');
     ele.children().first()
         .addClass('brk')
-        .addClass('brk-' + changeCase.paramCase(mod.name))
-        .attr('data-brk', mod.name);
+        .addClass('brk-' + changeCase.paramCase(mod.id))
+        .attr('data-brk', mod.id);
     return ele.html();
 };
 
 Render.prototype.linkStatic = function(html) {
     var $ = cheerio.load(html),
         $head = $('head');
+
+    if($head.length === 0) $head = $('html');
+    if($head.length === 0) $head = $.root();
+
     $head
-        .append($('<link rel="stylesheet">').attr('href', this.config.css.url))
-        .append($('<script></script>').attr('src', this.config.js.url));
+        .append($('<script></script>').attr('src', this.config.static.js.url))
+        .prepend($('<link rel="stylesheet">').attr('href', this.config.static.css.url));
     return $.html();
 };
 
