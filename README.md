@@ -1,17 +1,17 @@
-# Brick.JS
+## Brick.JS
 
 A fully modular MVC web application framework. Brick.js is an [Express.js][express]-based MVC, if you're not familiar with Express.js, see this:
 
 http://expressjs.com/en/index.html
 
-## Features
+### Features
 
 * Create reusable modules, each **module** contains: css, html, js, as well as a server controller.
 * One **module** can include others, just like template partials.
 * Automative CSS prefixing, JS modularization and loading.
 * It's the same js/css in both development and production environment.
 
-## Run the Demo
+### Run the Demo
 
 `demo/` directory contains a webapp powered by brick.js.
 Clone this repo, install dependencies, and run grunt from `demo/` directory.
@@ -25,7 +25,7 @@ grunt
 
 Open `http://localhost:3000` in your browser!
 
-## Minimal Usage
+### Minimal Usage
 
 Install brick.js as well as a template engine:
 
@@ -47,14 +47,17 @@ var brk = brickJs({
 app.use('/', brk.express);
 ```
 
-## Tutorial
+### Tutorial
 
-1. [Create Your First Module: Hello World!][first-module]
-2. [Customize the Error Page][error-page]
+* [How to create a simple module?][simple-module]
+* [How to add CSS and client-side JS?][css-and-js]
+* [How to customize the error page?][error-page]
 
-## Options
+For all usage and contribute guide, see: [brick.js wiki][wiki]
 
-### Full Usage
+### Options
+
+#### Full Usage
 
 ```javascript
 var brk = brickJs({
@@ -81,14 +84,14 @@ var brk = brickJs({
 });
 ```
 
-### root
+#### root
 
 Type: `String`
 Default: `path.join(__dirname, 'modules')`
 
 `root` is where the modules are located. Each module should be a folder consists of files specified by `path`.
 
-### engine
+#### engine
 
 Type: `Object`
 Default: `{render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))}`
@@ -100,35 +103,35 @@ Template engine for brick.js. Currently Available Template Engines:
 
 Template Engine Development Guide: Comming soon...
 
-### path.svr
+#### path.svr
 
 Type: `String`
 Default: `'server.js'`
 
 Server controller file name in module folder, see [`root`](#root).
 
-### path.clt
+#### path.clt
 
 Type: `String`
 Default: `'client.js'`
 
 Client JS file name. See [`path.svr`](#pathsvr).
 
-### path.tpl
+#### path.tpl
 
 Type: `String`
 Default: `'index.html'`
 
 HTML template file name. See [`path.svr`](#pathsvr).
 
-### path.css
+#### path.css
 
 Type: `String`
 Default: `'index.css'`
 
 CSS/LESS file name. See [`path.svr`](#pathsvr).
 
-### static.css.url
+#### static.css.url
 
 Type: `String`
 Default: `'/brick.js/site.css'`
@@ -137,7 +140,7 @@ A `<link href="{{static.css.url}}" rel="stylesheet">` is injected into the gener
 
 Note: there need not be a file named `site.css`.
 
-### static.css.file
+#### static.css.file
 
 Type: `String`
 Default: `false`
@@ -147,7 +150,7 @@ When set to `false`, the css file won't be saved.
 
 Note: this file can be conflict with `express.static` directory. Keep the URLs different.
 
-### static.css.comment
+#### static.css.comment
 
 Type: `String`
 Default: `'/* brick.js module: %s */'`
@@ -156,21 +159,21 @@ Comment before each module's css in the generated css file (which can be access 
 
 Note: `%s` is the module name(aka. param-cased module folder name).
 
-### static.js.url
+#### static.js.url
 
 Type: `String`
 Default: `'/brick.js/site.js'`
 
 See `static.css.url`.
 
-### static.js.file
+#### static.js.file
 
 Type: `String`
 Default: `false`
 
 See `static.css.file`.
 
-### static.js.comment
+#### static.js.comment
 
 Type: `String`
 Default: `'// brick.js module: %s'`
@@ -178,7 +181,10 @@ Default: `'// brick.js module: %s'`
 See `static.css.comment`.
 
 [express]: http://expressjs.com/en/index.html 
-[first-module]: 
+[simple-module]: https://github.com/harttle/brick.js/wiki/a-simple-module
 [brick-hbs]: https://github.com/harttle/brick-hbs
 [brick-liquid]: https://github.com/harttle/brick-liquid
 [demo]: https://github.com/harttle/brick.js/tree/master/demo
+[wiki]: https://github.com/harttle/brick.js/wiki
+[error-page]: https://github.com/harttle/brick.js/wiki/css-and-js
+[css-and-js]: https://github.com/harttle/brick.js/wiki/css-and-js

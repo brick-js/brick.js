@@ -12,7 +12,7 @@ function Module(name) {
     this.file = name;
     this.hash = Module.count++;
     this.id = changeCase.camelCase(name);
-    this.utime = {};    // update time
+    this.utime = {}; // update time
     Module.modules[this.id] = this;
 
     this.svrPath = path.resolve(Module.config.root, this.file, Module.config.path.svr);
@@ -39,15 +39,17 @@ Module.prototype.ctrl = function(req, ctx) {
             }
             return mod.ctrl(req, _.defaults(subCtx, ctx));
         };
-    return this.context(req)
+    return this.context(req, ctx)
         .then(localCtx => render.render(
             this.tplPath, _.defaults(localCtx, ctx), pctrl))
         .then(_.partial(Render.shared().modularize, this));
 };
 
 // @return: Promise<ctx>
-Module.prototype.context = function(req) {
-    return new Promise(_.partial(this.resolver, req));
+Module.prototype.context = function(req, ctx) {
+    return new Promise(_.partial(this.resolver, req).bind({
+        context: ctx
+    }));
 };
 
 Module.get = mid => Module.modules[changeCase.camelCase(mid)];
