@@ -24,12 +24,12 @@ var defaultConfig = {
         css: {
             url: '/brick.js/index.css',
             file: false,
-            comment: '/* brick.js module: %s */'
+            comment: '/* module: %s */'
         },
         js: {
             url: '/brick.js/index.js',
             file: false,
-            comment: '// brick.js module: %s'
+            comment: '// module: %s'
         }
     }
 };

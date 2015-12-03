@@ -1,1 +1,1 @@
-console.log('My name is:' + mod.name);
+console.log('my name is:' + mod.name);

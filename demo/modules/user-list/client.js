@@ -1,1 +1,1 @@
-console.log(mod.$element);
+console.log(mod.elements);

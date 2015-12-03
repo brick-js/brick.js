@@ -29,12 +29,12 @@ var brk = brickJs({
         css: {
             url: '/brick.js/site.css',
             file: path.resolve(__dirname, '.build/site.css'),
-            comment: '/* brick.js module: %s */'
+            comment: '/* module: %s */'
         },
         js: {
             url: '/brick.js/site.js',
             file: path.resolve(__dirname, '.build/site.js'),
-            comment: '// brick.js module: %s'
+            comment: '// module: %s'
         }
     }
 });

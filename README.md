@@ -73,12 +73,12 @@ var brk = brickJs({
         css: {
             url: '/brick.js/site.css',
             file: path.resolve(__dirname, '.build/site.css'),
-            comment: '/* brick.js module: %s */'
+            comment: '/* module: %s */'
         },
         js: {
             url: '/brick.js/site.js',
             file: path.resolve(__dirname, '.build/site.js'),
-            comment: '// brick.js module: %s'
+            comment: '// module: %s'
         }
     }
 });
@@ -153,11 +153,11 @@ Note: this file can be conflict with `express.static` directory. Keep the URLs d
 #### static.css.comment
 
 Type: `String`
-Default: `'/* brick.js module: %s */'`
+Default: `'/* module: %s */'`
 
 Comment before each module's css in the generated css file (which can be access by `static.css.url`). 
 
-Note: `%s` is the module name(aka. param-cased module folder name).
+Note: `%s` is the module name ([param-cased][param-case]).
 
 #### static.js.url
 
@@ -176,7 +176,7 @@ See `static.css.file`.
 #### static.js.comment
 
 Type: `String`
-Default: `'// brick.js module: %s'`
+Default: `'// module: %s'`
 
 See `static.css.comment`.
 
@@ -188,3 +188,4 @@ See `static.css.comment`.
 [wiki]: https://github.com/harttle/brick.js/wiki
 [error-page]: https://github.com/harttle/brick.js/wiki/css-and-js
 [css-and-js]: https://github.com/harttle/brick.js/wiki/css-and-js
+[param-case]: https://github.com/blakeembrey/param-case

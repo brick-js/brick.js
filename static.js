@@ -8,7 +8,9 @@ var changeCase = require('change-case');
 var debug = require('debug')('brick:static');
 var http = require('./http');
 var express = require('express');
-var brkLoader = fs.readFileSync(path.resolve(__dirname, 'client.js'), 'utf8');
+
+var clientLoader = path.resolve(__dirname, 'client.js');
+var brkLoader = loaderWrapper(fs.readFileSync(clientLoader, 'utf8'));
 var contentType = {
     js: 'application/javascript',
     css: 'text/css'
@@ -89,5 +91,8 @@ function compileLess(src, config) {
         less.render(src, config, (e, output) =>
             e ? reject(e) : resolve(output.css)));
 }
-
+function loaderWrapper(str){
+    var src = str.replace(/[\n\r]/g, '').replace(/\s+/g, ' ');
+    return '// Brick.js https://github.com/harttle/brick.js\n\n// loader\n' + src + '\n';
+}
 module.exports = config => new Static(config);
