@@ -87,6 +87,7 @@ var brk = brickJs({
 #### root
 
 Type: `String`
+
 Default: `path.join(__dirname, 'modules')`
 
 `root` is where the modules are located. Each module should be a folder consists of files specified by `path`.
@@ -94,18 +95,20 @@ Default: `path.join(__dirname, 'modules')`
 #### engine
 
 Type: `Object`
+
 Default: `{render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))}`
 
 Template engine for brick.js. Currently Available Template Engines:
 
-* [brick-hbs][brick-hbs]: Handlebars template engine for brick.js.
-* [brick-liquid][brick-liquid]: Comming soon...
+* [brick-hbs][brick-hbs]: Handlebars template engine for brick.js
+* [brick-liquid][brick-liquid]: Liquid template engine for brick.js
 
-Template Engine Development Guide: Comming soon...
+Template Engine Development Guide: [Template Engine Interface][tpl-contrib]
 
 #### path.svr
 
 Type: `String`
+
 Default: `'server.js'`
 
 Server controller file name in module folder, see [`root`](#root).
@@ -113,6 +116,7 @@ Server controller file name in module folder, see [`root`](#root).
 #### path.clt
 
 Type: `String`
+
 Default: `'client.js'`
 
 Client JS file name. See [`path.svr`](#pathsvr).
@@ -120,6 +124,7 @@ Client JS file name. See [`path.svr`](#pathsvr).
 #### path.tpl
 
 Type: `String`
+
 Default: `'index.html'`
 
 HTML template file name. See [`path.svr`](#pathsvr).
@@ -127,6 +132,7 @@ HTML template file name. See [`path.svr`](#pathsvr).
 #### path.css
 
 Type: `String`
+
 Default: `'index.css'`
 
 CSS/LESS file name. See [`path.svr`](#pathsvr).
@@ -134,6 +140,7 @@ CSS/LESS file name. See [`path.svr`](#pathsvr).
 #### static.css.url
 
 Type: `String`
+
 Default: `'/brick.js/site.css'`
 
 A `<link href="{{static.css.url}}" rel="stylesheet">` is injected into the generated HTML automatically. And this url is registered as a router by brick.js. 
@@ -143,6 +150,7 @@ Note: there need not be a file named `site.css`.
 #### static.css.file
 
 Type: `String`
+
 Default: `false`
 
 Absolute filepath for brick.js to save the generated css, this file is for build/deploy usage.
@@ -153,6 +161,7 @@ Note: this file can be conflict with `express.static` directory. Keep the URLs d
 #### static.css.comment
 
 Type: `String`
+
 Default: `'/* module: %s */'`
 
 Comment before each module's css in the generated css file (which can be access by `static.css.url`). 
@@ -162,6 +171,7 @@ Note: `%s` is the module name ([param-cased][param-case]).
 #### static.js.url
 
 Type: `String`
+
 Default: `'/brick.js/site.js'`
 
 See `static.css.url`.
@@ -169,6 +179,7 @@ See `static.css.url`.
 #### static.js.file
 
 Type: `String`
+
 Default: `false`
 
 See `static.css.file`.
@@ -176,6 +187,7 @@ See `static.css.file`.
 #### static.js.comment
 
 Type: `String`
+
 Default: `'// module: %s'`
 
 See `static.css.comment`.
@@ -186,6 +198,7 @@ See `static.css.comment`.
 [brick-liquid]: https://github.com/harttle/brick-liquid
 [demo]: https://github.com/harttle/brick.js/tree/master/demo
 [wiki]: https://github.com/harttle/brick.js/wiki
-[error-page]: https://github.com/harttle/brick.js/wiki/css-and-js
+[error-page]: https://github.com/harttle/brick.js/wiki/customize-error-page
 [css-and-js]: https://github.com/harttle/brick.js/wiki/css-and-js
 [param-case]: https://github.com/blakeembrey/param-case
+[tpl-contrib]: https://github.com/harttle/brick.js/wiki/Template-Engine-Interface
