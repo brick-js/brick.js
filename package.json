@@ -1,6 +1,6 @@
 {
   "name": "brick.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Yet another modular web application framework",
   "main": "index.js",
   "scripts": {
