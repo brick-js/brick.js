@@ -1,3 +1,5 @@
+var debug = require('debug')('brick:router');
+
 function send(res, type, status, content) {
     res
         .set('Content-Type', type)

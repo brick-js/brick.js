@@ -34,13 +34,18 @@ Static.prototype._expressFactory = function(type) {
     return (req, res, next) =>
         this.update(type).then(dirty => {
             var resolver = type === 'css' ? 'getCss' : 'getJs';
-            return this[resolver]().then(content => {
-                http.send(res, contentType[type], 200, content);
-                var filename = this.config[type].file;
-                if (filename) {
-                    return file.write(filename, content);
-                }
-            });
+            return this[resolver]();
+        })
+        .then(content => {
+            http.send(res, contentType[type], 200, content);
+            return content;
+        })
+        .then(content =>{
+            var filename = this.config[type].file;
+            if (!filename) return true;
+
+            return file.write(filename, content)
+                .catch(e => console.warn('cannot write ' + filename));
         }).catch(next);
 };
 
@@ -91,7 +96,8 @@ function compileLess(src, config) {
         less.render(src, config, (e, output) =>
             e ? reject(e) : resolve(output.css)));
 }
-function loaderWrapper(str){
+
+function loaderWrapper(str) {
     var src = str.replace(/[\n\r]/g, '').replace(/\s+/g, ' ');
     return '// Brick.js https://github.com/harttle/brick.js\n\n// loader\n' + src + '\n';
 }

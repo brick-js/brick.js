@@ -20,10 +20,8 @@ Render.prototype.modularize = function(mod, html){
     html = '<div>' + html.trim() + '</div>';
     var $ = cheerio.load(html),
         ele = $('div');
-    ele.children().first()
-        .addClass('brk')
-        .addClass('brk-' + changeCase.paramCase(mod.id))
-        .attr('data-brk', mod.id);
+        cls = 'brk-' + changeCase.paramCase(mod.id);
+    ele.children().first().addClass(cls);
     return ele.html();
 };
 
