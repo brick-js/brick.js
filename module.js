@@ -40,9 +40,10 @@ Module.prototype.ctrl = function(req, ctx) {
             return mod.ctrl(req, _.defaults(subCtx, ctx));
         };
     return this.context(req, ctx)
-        .then(localCtx => render.render(
-            this.tplPath, _.defaults(localCtx, ctx), pctrl))
-        .then(_.partial(Render.shared().modularize, this));
+        .then(localCtx =>
+            render.render(this.tplPath, _.defaults(localCtx, ctx), pctrl))
+        .then(html =>
+            Render.shared().modularize(this, html));
 };
 
 // @return: Promise<ctx>
