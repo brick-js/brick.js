@@ -6,9 +6,10 @@ var Router = require('./router');
 var debug = require('debug')('brick:index');
 var Static = require('./static');
 var Render = require('./render');
+var Bluebird = require('bluebird');
 
 var defaultEngine = {
-    render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))
+    render: (tpl, ctx, pctrl) => Bluebird.reject(new Error('ENOENGINE'))
 };
 
 var defaultConfig = {

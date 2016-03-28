@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var debug = require('debug')('brick:file');
 var isSafe = { 'ENOENT': true };
+var Bluebird = require('bluebird');
 
 function canRead(filepath) {
     try {
@@ -13,19 +14,19 @@ function canRead(filepath) {
 }
 
 function stat(path) {
-    return new Promise((res, rej) => {
+    return new Bluebird((res, rej) => {
         fs.stat(path, (e, stats) => e ? rej(e) : res(stats));
     });
 }
 
 function read(path) {
-    return new Promise((res, rej) =>
+    return new Bluebird((res, rej) =>
         fs.readFile(path, 'utf8', (e, data) => 
             !e || isSafe[e.code] ? res(data || '') : rej(e)));
 }
 
 function write(filename, data) {
-    return new Promise((res, rej) =>
+    return new Bluebird((res, rej) =>
         fs.writeFile(filename, data, 'utf8', e => e ? rej(e) : res()));
 }
 

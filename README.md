@@ -72,7 +72,8 @@ var brk = brickJs({
     static: {
         css: {
             file: path.resolve(__dirname, '.build/site.css'),
-            comment: '/* module: %s */'
+            comment: '/* module: %s */',
+            processor: require('brick-less')
         },
         js: {
             file: path.resolve(__dirname, '.build/site.js'),

@@ -5,8 +5,10 @@ function send(res, type, status, content) {
         .set('Content-Type', type)
         .status(status)
         .end(new Buffer(content));
+    return content;
 }
 
 module.exports = {
-    send
+    send,
+    ok: (res, type, content) => send(res, type, 200, content)
 };

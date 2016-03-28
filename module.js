@@ -5,6 +5,7 @@ var _ = require('lodash');
 var debug = require('debug')('brick:module');
 var Render = require('./render');
 var defaultResolver = (req, done, fail) => done({});
+var Bluebird = require('bluebird');
 
 function Module(name) {
     debug('init module:', name);
@@ -29,7 +30,7 @@ function Module(name) {
     this.resolver = this.resolver || defaultResolver;
 }
 
-// @return: Promise<HTML>
+// @return: Bluebird<HTML>
 Module.prototype.ctrl = function(req, ctx) {
     var render = Render.shared(),
         pctrl = (mid, subCtx) => {
@@ -49,9 +50,9 @@ Module.prototype.ctrl = function(req, ctx) {
             Render.shared().modularize(this, html));
 };
 
-// @return: Promise<ctx>
+// @return: Bluebird<ctx>
 Module.prototype.context = function(req, ctx) {
-    return new Promise(_.partial(this.resolver, req).bind({
+    return new Bluebird(_.partial(this.resolver, req).bind({
         context: ctx
     }));
 };
