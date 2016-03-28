@@ -32,8 +32,7 @@ Router.prototype.mountModule = function(mod){
     this.expressRouter.get(mod.url, (req, res, next) => mod.ctrl(req)
         .then(html => Render.shared().linkStatic(html))
         .then(_.partial(http.send, res, 'text/html', 200))
-        .catch(next)
-    );
+        .catch(next));
 };
 
 Router.prototype.mountErrorHandlers = function(){
@@ -46,10 +45,8 @@ Router.prototype.mountErrorHandlers = function(){
 
     // customized error page
     this.expressRouter.use(function(err, req, res, next) {
-        debug(err.stack);
-
         var mod = Module.get('error');
-        if(!mod) return next(err);
+        if(!mod) return next(err);  // apply default error handler
 
         mod.ctrl(req, {error: err})
             .then(html => Render.shared().linkStatic(html))
@@ -59,6 +56,7 @@ Router.prototype.mountErrorHandlers = function(){
 
     // default error handler
     this.expressRouter.use(function(err, req, res, next) {
+        console.error(err.stack || err);
         var html = `<pre><code>${err.stack}</code></pre>`;
         http.send(res, 'text/html', err.status || 500, html);
     });

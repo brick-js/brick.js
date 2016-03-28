@@ -15,10 +15,11 @@ function Module(name) {
     this.utime = {}; // update time
     Module.modules[this.id] = this;
 
-    this.svrPath = path.resolve(Module.config.root, this.file, Module.config.path.svr);
-    this.tplPath = path.resolve(Module.config.root, this.file, Module.config.path.tpl);
-    this.cltPath = path.resolve(Module.config.root, this.file, Module.config.path.clt);
-    this.cssPath = path.resolve(Module.config.root, this.file, Module.config.path.css);
+    this.path = path.resolve(Module.config.root, this.file);
+    this.svrPath = path.resolve(this.path, Module.config.path.svr);
+    this.tplPath = path.resolve(this.path, Module.config.path.tpl);
+    this.cltPath = path.resolve(this.path, Module.config.path.clt);
+    this.cssPath = path.resolve(this.path, Module.config.path.css);
 
     if (file.canRead(this.svrPath)) {
         var server = require(this.svrPath) || {};
@@ -40,8 +41,10 @@ Module.prototype.ctrl = function(req, ctx) {
             return mod.ctrl(req, _.defaults(subCtx, ctx));
         };
     return this.context(req, ctx)
-        .then(localCtx =>
-            render.render(this.tplPath, _.defaults(localCtx, ctx), pctrl))
+        .then(localCtx =>{
+            var locals = _.defaults(localCtx, ctx, req.app.locals);
+            return render.render(this.tplPath, locals, pctrl);
+        })
         .then(html =>
             Render.shared().modularize(this, html));
 };

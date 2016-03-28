@@ -71,12 +71,10 @@ var brk = brickJs({
     },
     static: {
         css: {
-            url: '/brick.js/site.css',
             file: path.resolve(__dirname, '.build/site.css'),
             comment: '/* module: %s */'
         },
         js: {
-            url: '/brick.js/site.js',
             file: path.resolve(__dirname, '.build/site.js'),
             comment: '// module: %s'
         }
@@ -137,16 +135,6 @@ Default: `'index.css'`
 
 CSS/LESS file name. See [`path.svr`](#pathsvr).
 
-#### static.css.url
-
-Type: `String`
-
-Default: `'/brick.js/site.css'`
-
-A `<link href="{{static.css.url}}" rel="stylesheet">` is injected into the generated HTML automatically. And this url is registered as a router by brick.js. 
-
-Note: there need not be a file named `site.css`.
-
 #### static.css.file
 
 Type: `String`
@@ -164,17 +152,9 @@ Type: `String`
 
 Default: `'/* module: %s */'`
 
-Comment before each module's css in the generated css file (which can be access by `static.css.url`). 
+Comment before each module's css in the generated css file. 
 
 Note: `%s` is the module name ([param-cased][param-case]).
-
-#### static.js.url
-
-Type: `String`
-
-Default: `'/brick.js/site.js'`
-
-See `static.css.url`.
 
 #### static.js.file
 

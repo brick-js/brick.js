@@ -17,12 +17,18 @@ Render.prototype.render = function(tplPath, ctx, pctrl){
 };
 
 Render.prototype.modularize = function(mod, html){
-    html = '<div>' + html.trim() + '</div>';
-    var $ = cheerio.load(html),
-        ele = $('div');
-        cls = 'brk-' + changeCase.paramCase(mod.id);
-    ele.children().first().addClass(cls);
-    return ele.html();
+    html = html.trim();
+    if(html.match(/^<head\s/)){
+        return html;
+    }
+    else{
+        html = '<div>' + html + '</div>';
+        var $ = cheerio.load(html),
+            ele = $('div');
+            cls = 'brk-' + changeCase.paramCase(mod.id);
+        ele.children().first().addClass(cls);
+        return ele.html();
+    }
 };
 
 Render.prototype.linkStatic = function(html) {

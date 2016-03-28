@@ -22,12 +22,12 @@ var defaultConfig = {
     },
     static: {
         css: {
-            url: '/brick.js/index.css',
+            url: '/104097114116116108101.css',
             file: false,
             comment: '/* module: %s */'
         },
         js: {
-            url: '/brick.js/index.js',
+            url: '/104097114116116108101.js',
             file: false,
             comment: '// module: %s'
         }

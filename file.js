@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var debug = require('debug')('brick:file');
+var isSafe = { 'ENOENT': true };
 
 function canRead(filepath) {
     try {
@@ -17,9 +18,10 @@ function stat(path) {
     });
 }
 
-function read(filename) {
+function read(path) {
     return new Promise((res, rej) =>
-        fs.readFile(filename, 'utf8', (e, data) => e ? rej(e) : res(data)));
+        fs.readFile(path, 'utf8', (e, data) => 
+            !e || isSafe[e.code] ? res(data || '') : rej(e)));
 }
 
 function write(filename, data) {
