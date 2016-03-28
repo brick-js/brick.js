@@ -5,7 +5,6 @@ var _ = require('lodash');
 var debug = require('debug')('brick:module');
 var Render = require('./render');
 var defaultResolver = (req, done, fail) => done({});
-var Bluebird = require('bluebird');
 
 function Module(name) {
     debug('init module:', name);
@@ -13,7 +12,6 @@ function Module(name) {
     this.file = name;
     this.hash = Module.count++;
     this.id = changeCase.camelCase(name);
-    this.utime = {}; // update time
     Module.modules[this.id] = this;
 
     this.path = path.resolve(Module.config.root, this.file);
@@ -30,7 +28,7 @@ function Module(name) {
     this.resolver = this.resolver || defaultResolver;
 }
 
-// @return: Bluebird<HTML>
+// @return: Promise<HTML>
 Module.prototype.ctrl = function(req, ctx) {
     var render = Render.shared(),
         pctrl = (mid, subCtx) => {
@@ -50,9 +48,9 @@ Module.prototype.ctrl = function(req, ctx) {
             Render.shared().modularize(this, html));
 };
 
-// @return: Bluebird<ctx>
+// @return: Promise<ctx>
 Module.prototype.context = function(req, ctx) {
-    return new Bluebird(_.partial(this.resolver, req).bind({
+    return new Promise(_.partial(this.resolver, req).bind({
         context: ctx
     }));
 };

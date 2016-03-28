@@ -8,10 +8,8 @@ var changeCase = require('change-case');
 var debug = require('debug')('brick:static');
 var http = require('./http');
 var express = require('express');
-var Bluebird = require('bluebird');
 
-var clientLoader = path.resolve(__dirname, 'client.js');
-var brkLoader = loaderWrapper(fs.readFileSync(clientLoader, 'utf8'));
+var clientLoader = loadClientLoader('client.js');
 var defaultConfig = {
     css: {
         processor: cssProcessorFactory
@@ -26,6 +24,7 @@ function Static(_config) {
     config.css.processor = config.css.processor({
         root: _config.root
     });
+    config.js.processor = config.js.processor();
 
     this.modules = _config.modules;
     this.config = config;
@@ -56,80 +55,70 @@ Static.prototype._expressFactory = function(resolver, contentType, filename) {
         .catch(e => console.warn('cannot write ' + filename));
 };
 
-Static.prototype.update = function(type) {
-    var staticFile = type === 'css' ? 'cssPath' : 'cltPath';
-
-    var ps = _.map(this.modules, mod =>
-        file.read(mod[staticFile])
-        .then(file => mod[type] = file)
-    );
-    return Bluebird.all(ps);
-};
-
 Static.prototype.getCss = function() {
     var processor = this.config.css.processor,
-        comment = this.config.css.comment;
-    return Bluebird 
-        .all(_.map(this.modules, load))
-        .then(items => {
-            debug(items)
-            return items;
-        })
-        .then(items => _.map(items, item => render(item.src, item.mod)))
-        .then(items => _.map(items, item => commentize(item.src, item.mod)))
+        commentFmt = this.config.css.comment;
+    return Promise.resolve(this.modules)
+        .map(render)
+        .map(commentize)
         .then(combine);
 
-    function load(mod){
-        return file.read(mod.cssPath).then(src => ({
-            src: src,
-            mod: mod
-        }));
-    }
-    function render(src, mod){
+    function render(mod) {
         var rootClass = `.brk-${changeCase.paramCase(mod.id)}`;
-        return processor.render(src, rootClass).then(src => ({
+        return processor.render(mod.cssPath, rootClass).then(src => ({
             src: src,
             mod: mod
         }));
     }
-    function commentize(src, mod) {
-        var comment = util.format(comment, mod.id);
+
+    function commentize(item) {
+        var src = item.src,
+            mod = item.mod,
+            comment = util.format(commentFmt, mod.id);
         return `${comment}\n${src}\n`;
     }
 };
 
 Static.prototype.getJs = function() {
-    var comment = this.config.js.comment,
+    var commentFmt = this.config.js.comment,
         processor = this.config.js.processor;
-    return Bluebird
-        .all(_.map(this.modules, render))
-        .then(files => files.unshift(brkLoader))
+    return Promise.resolve(this.modules)
+        .map(render)
+        .map(isolate)
+        .map(commentize)
+        .then(files => [clientLoader].concat(files))
         .then(combine);
 
-    function render(mod){
+    function render(mod) {
+        return processor.render(mod.cltPath)
+            .then(src => ({
+                src: src,
+                mod: mod
+            }));
     }
-    var js = _.reduce(modules, (res, mod) =>
-        res + jsForModule(mod, comment), brkLoader);
-    return Bluebird.resolve(js);
+    function isolate(item){
+        var mod = item.mod, src = item.src;
+        item.src = `window.brk.${mod.id}=function(mod, console){\n${src}}\n`;
+        return item;
+    }
+    function commentize(item) {
+        var src = item.src,
+            mod = item.mod,
+            comment = util.format(commentFmt, mod.id);
+        return `${comment}\n${src}\n`;
+    }
 };
 
-function jsForModule(mod, commentFormat) {
-    if (!mod.js) return '';
-    var comment = util.format(commentFormat, mod.id);
-    return `\n${comment}\nwindow.brk.${mod.id}=function(mod, console){\n${mod.js}}\n`;
-}
-
-function loaderWrapper(str) {
-    var src = str.replace(/[\n\r]/g, '').replace(/\s+/g, ' ');
-    return '// Brick.js https://github.com/harttle/brick.js\n\n// loader\n' + src + '\n';
+function loadClientLoader(file) {
+    var src = fs.readFileSync(path.resolve(__dirname, file), 'utf8'),
+        comment = '// Brick.js https://github.com/harttle/brick.js\n\n// loader';
+    src = src.replace(/[\n\r]/g, '').replace(/\s+/g, ' ');
+    return `${comment}\n${src}\n\n`;
 }
 
 function jsProcessorFactory() {
     return {
-        render: (path, rootClass) =>
-            file.read(path)
-            .then(css => `${rootClass}{\n${css}\n}\n`)
-            .then(compile)
+        render: path => file.read(path)
     };
 }
 
@@ -142,14 +131,14 @@ function cssProcessorFactory() {
     };
 
     function compile(src) {
-        return new Bluebird((resolve, reject) =>
+        return new Promise((resolve, reject) =>
             less.render(src, (e, output) =>
                 e ? reject(parseError(e)) : resolve(output.css)));
     }
 }
 
-function combine(files){
-    return styles.reduce((prev, next) => prev + next, '');
+function combine(files) {
+    return files.reduce((prev, next) => prev + next, '');
 }
 
 module.exports = config => new Static(config);

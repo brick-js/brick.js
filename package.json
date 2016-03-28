@@ -17,10 +17,7 @@
     "url": "https://github.com/harttle/brick.js/issues"
   },
   "dependencies": {
-    "bluebird": "^3.3.4",
-    "brick-hbs": "^1.0.0",
     "change-case": "^2.3.0",
-    "cheerio": "^0.19.0",
     "debug": "^2.2.0",
     "express": "^4.13.3",
     "less": "^2.5.3",

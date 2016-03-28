@@ -1,4 +1,4 @@
-var Module = require('./module');
+require('./global');
 var file = require('./file');
 var path = require('path');
 var _ = require('lodash');
@@ -6,10 +6,10 @@ var Router = require('./router');
 var debug = require('debug')('brick:index');
 var Static = require('./static');
 var Render = require('./render');
-var Bluebird = require('bluebird');
+var Module = require('./module');
 
 var defaultEngine = {
-    render: (tpl, ctx, pctrl) => Bluebird.reject(new Error('ENOENGINE'))
+    render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))
 };
 
 var defaultConfig = {
