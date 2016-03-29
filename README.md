@@ -5,10 +5,10 @@ A fully modular MVC web application framework based on [Express.js][express].
 
 ### Features
 
-* Modular Web Development. Each **module** contains: css, html, js, and a server controller.
-* Isolated CSS. CSS is prefixed and applied to the corresponding html.
-* Isolated Client-side JS. A minimal JS modularization/loading is done for each module.
-* Minimal resource(CSS/JS) difference between development/production environment
+* **Modular Web Development** Each *module* contains: css, html, js, and a server controller.
+* **Isolated CSS** CSS is prefixed and applied to the corresponding html.
+* **Isolated Client-side JS** A minimal JS modularization/loading is done for each module.
+* **Minimal Resource(CSS/JS) Difference** between development/production environment
 
 ### The Demo
 
@@ -16,7 +16,7 @@ A fully modular MVC web application framework based on [Express.js][express].
 
 ### Minimal Usage
 
-Install brick.js as well as a template engine:
+Install brick.js and brick-hbs(Handlebars Template Engine, you may have a choice here, see below):
 
 ```bash
 npm install --save brick.js brick-hbs
@@ -42,7 +42,7 @@ app.use('/', brk.express);
 * [How to add CSS and client-side JS?][css-and-js]
 * [How to customize the error page?][error-page]
 
-For all usage and contribute guide, see: [brick.js wiki][wiki]
+For usage and contribution guide, see: [brick.js wiki][wiki]
 
 ### Options
 
