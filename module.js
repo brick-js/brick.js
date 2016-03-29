@@ -41,7 +41,7 @@ Module.prototype.ctrl = function(req, ctx) {
         };
     return this.context(req, ctx)
         .then(localCtx =>{
-            var locals = _.defaults(localCtx, ctx, req.app.locals);
+            var locals = _.defaults(localCtx || {}, ctx, req.app.locals);
             return render.render(this.tplPath, locals, pctrl);
         })
         .then(html =>

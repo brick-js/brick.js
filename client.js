@@ -12,7 +12,7 @@ window.brk = {};
         resolve(function(mod) {
             var ctrl = window.brk[camelCase(mod)];
             if (typeof ctrl !== 'function') return;
-            ctrl(brkFactory(mod), conslFactory(mod));
+            ctrl(brkFactory(mod));
         });
     }
 
@@ -39,19 +39,15 @@ window.brk = {};
     }
 
     function brkFactory(mod) {
-        var elements = document.querySelectorAll('.brk-' + mod);
         return {
-            name: camelCase(mod),
-            elements: elements
-        };
-    }
-
-    function conslFactory(mod) {
-        return {
-            log: console.log.bind(console, '[' + mod + ']'),
-            info: console.info.bind(console, '[' + mod + ']'),
-            warn: console.warn.bind(console, '[' + mod + ']'),
-            error: console.error.bind(console, '[' + mod + ']'),
+            module: camelCase(mod), 
+            console: {
+                log: console.log.bind(console, '[' + mod + ']'),
+                info: console.info.bind(console, '[' + mod + ']'),
+                warn: console.warn.bind(console, '[' + mod + ']'),
+                error: console.error.bind(console, '[' + mod + ']')
+            },
+            elements: document.querySelectorAll('.brk-' + mod)
         };
     }
 })(window, document);

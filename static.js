@@ -98,7 +98,7 @@ Static.prototype.getJs = function() {
     }
     function isolate(item){
         var mod = item.mod, src = item.src;
-        item.src = `window.brk.${mod.id}=function(mod, console){\n${src}}\n`;
+        item.src = `window.brk.${mod.id}=function(brk){\n${src}}\n`;
         return item;
     }
     function commentize(item) {
