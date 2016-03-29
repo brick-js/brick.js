@@ -1,29 +1,18 @@
 ## Brick.JS
 
-A fully modular MVC web application framework. Brick.js is an [Express.js][express]-based MVC, if you're not familiar with Express.js, see this:
+A fully modular MVC web application framework based on [Express.js][express]. 
 
-http://expressjs.com/en/index.html
 
 ### Features
 
-* Create reusable modules, each **module** contains: css, html, js, as well as a server controller.
-* One **module** can include others, just like template partials.
-* Automative CSS prefixing, JS modularization and loading.
-* It's the same js/css in both development and production environment.
+* Modular Web Development. Each **module** contains: css, html, js, and a server controller.
+* Isolated CSS. CSS is prefixed and applied to the corresponding html.
+* Isolated Client-side JS. A minimal JS modularization/loading is done for each module.
+* Minimal resource(CSS/JS) difference between development/production environment
 
-### Run the Demo
+### The Demo
 
-`demo/` directory contains a webapp powered by brick.js.
-Clone this repo, install dependencies, and run grunt from `demo/` directory.
-
-```bash
-git clone git@github.com:harttle/brick.js.git && npm install
-cd brick.js && npm install
-cd demo && npm install
-grunt
-```
-
-Open `http://localhost:3000` in your browser!
+[harttle/brick-demo][demo] is a minimal demo project for brick.js. 
 
 ### Minimal Usage
 
@@ -157,6 +146,14 @@ Comment before each module's css in the generated css file.
 
 Note: `%s` is the module name ([param-cased][param-case]).
 
+#### static.css.processor
+
+Type: `Function`
+
+Default: prefix and combine css files
+
+CSS pre-processor (like LESS/SASS) wrapper. [harttle/brick-less][brick-less] is available.
+
 #### static.js.file
 
 Type: `String`
@@ -177,9 +174,10 @@ See `static.css.comment`.
 [simple-module]: https://github.com/harttle/brick.js/wiki/a-simple-module
 [brick-hbs]: https://github.com/harttle/brick-hbs
 [brick-liquid]: https://github.com/harttle/brick-liquid
-[demo]: https://github.com/harttle/brick.js/tree/master/demo
+[demo]: https://github.com/harttle/brick-demo
 [wiki]: https://github.com/harttle/brick.js/wiki
 [error-page]: https://github.com/harttle/brick.js/wiki/customize-error-page
 [css-and-js]: https://github.com/harttle/brick.js/wiki/css-and-js
 [param-case]: https://github.com/blakeembrey/param-case
 [tpl-contrib]: https://github.com/harttle/brick.js/wiki/Template-Engine-Interface
+[brick-less]: https://github.com/harttle/brick-less
