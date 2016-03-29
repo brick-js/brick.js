@@ -14,6 +14,16 @@ A fully modular MVC web application framework based on [Express.js][express].
 
 [harttle/brick-demo][demo] is a minimal demo project for brick.js. 
 
+To get started:
+
+```bash
+git clone git@github.com:harttle/brick-demo.git --depth=1
+cd brick-demo && npm install
+node app.js
+```
+
+Open <http://localhost:3000> !
+
 ### Minimal Usage
 
 Install brick.js and brick-hbs(Handlebars Template Engine, you may have a choice here, see below):
