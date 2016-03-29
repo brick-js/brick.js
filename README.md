@@ -33,17 +33,21 @@ npm install --save brick.js brick-hbs
 ```
 
 ```javascript
+var express = require('express');
+var path = require('path');
 var brickJs = require('brick.js');
-var hbs = require('brick-hbs');
-
-var app = express();
+var Liquid = require('brick-liquid');
 
 var brk = brickJs({
     root: path.join(__dirname, 'modules'),
-    engine: hbs.brick()
+    engine: new Liquid()
 });
 
+var app = express();
 app.use('/', brk.express);
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
 ```
 
 ### Tutorial
