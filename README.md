@@ -1,11 +1,17 @@
 ## Brick.JS
 
-A fully modular MVC web application framework based on [Express.js][express]. 
+![Build Status](https://travis-ci.org/brick-js/brick.js.svg?branch=master)
+![Dependency manager](https://david-dm.org/brick-js/brick.js.png)
 
+A fully modular web framework based on [Express.js][express]. 
+The entire web-app is break down into inter-dependent modules,
+which provides greater portability and reusability.
+
+> A *module* consists of styles, templates, scripts, and a controller.
 
 ### Features
 
-* **Modular Web Development** Each *module* contains: css, html, js, and a server controller.
+* **Modular Web Development** Each *module* contains: css, html, js, and a server-side controller.
 * **Isolated CSS** CSS is prefixed and applied to the corresponding html.
 * **Isolated Client-side JS** A minimal JS modularization/loading is done for each module.
 * **Minimal Resource(CSS/JS) Difference** between development/production environment
