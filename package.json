@@ -1,27 +1,34 @@
 {
   "name": "brick.js",
-  "version": "1.1.2",
-  "description": "Yet another modular web application framework",
+  "version": "2.0.0",
+  "description": "A HMVC style web-dev framework for Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/harttle/brick.js"
+    "url": "https://github.com/brick-js/brick.js"
   },
   "author": "harttle",
-  "homepage": "https://github.com/harttle/brick.js#readme",
+  "homepage": "https://github.com/brick-js/brick.js#readme",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/harttle/brick.js/issues"
+    "url": "https://github.com/brick-js/brick.js/issues"
   },
   "dependencies": {
+    "bluebird": "^3.3.5",
     "change-case": "^2.3.0",
     "cheerio": "^0.20.0",
     "debug": "^2.2.0",
     "express": "^4.13.3",
     "less": "^2.5.3",
     "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "sinon": "^1.17.3",
+    "mocha": "^2.4.5"
   }
 }

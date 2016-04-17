@@ -1,57 +1,31 @@
-require('./global');
-var file = require('./file');
-var path = require('path');
 var _ = require('lodash');
-var Router = require('./router');
+var config = require('./config');
+var Router = require('./app/router');
+var Static = require('./app/static');
+var Module = require('./module/wmd');
+var Render = require('./module/render');
+var Processor = require('./module/processor.js');
 var debug = require('debug')('brick:index');
-var Static = require('./static');
-var Render = require('./render');
-var Module = require('./module');
 
-var defaultEngine = {
-    render: (tpl, ctx, pctrl) => Promise.reject(new Error('ENOENGINE'))
+var brick = {
+    engine: (type, engine) => Render.register(type, engine),
+    processor: (type, processor) => Processor.register(type, processor)
 };
 
-var defaultConfig = {
-    root: path.join(__dirname, 'modules'),
-    engine: defaultEngine,
-    path: {
-        svr: 'server.js',
-        css: 'index.css',
-        clt: 'client.js',
-        tpl: 'index.html'
-    },
-    static: {
-        css: {
-            url: '/104097114116116108101.css',
-            file: false,
-            comment: '/* module: %s */'
-        },
-        js: {
-            url: '/104097114116116108101.js',
-            file: false,
-            comment: '// module: %s'
-        }
-    }
-};
+function factory(cfg){
+    cfg = config.factory(cfg);
 
-function Brick(config) {
-    this.config = config;
-    this.render = Render.create(config);
-    this.modules = Module.load(config);
+    var modules = Module.loadAll(cfg);
+    var sttc = Static(modules, cfg.static);
+    var router = Router(cfg);
 
-    this.static = Static(_.defaults(config, {modules: this.modules}));
-    this.router = Router(config);
+    router.mountModules(modules);
+    router.mountStatic(sttc.express());
+    router.mountErrorHandlers();
 
-    this.router.mountModules(this.modules);
-    this.router.mountStatic(this.static.express());
-    this.router.mountErrorHandlers();
-
-    this.express = this.router.get();
+    var brk = Object.create(brick);
+    brk.express = router.get();
+    return brk;
 }
 
-module.exports = function(config) {
-    config = _.defaultsDeep(config || {}, defaultConfig);
-    return new Brick(config);
-};
-
+module.exports = factory;
