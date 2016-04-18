@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/brick.js.svg?style=flat)](https://www.npmjs.org/package/brick.js)
 [![Build Status](https://travis-ci.org/brick-js/brick.js.svg?branch=master)](https://travis-ci.org/brick-js/brick.js)
-[![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master&foo=bar)
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
 A HMVC style web app development framework for Node.js, 
