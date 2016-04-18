@@ -48,7 +48,7 @@ Static.prototype.getJs = function() {
     }
     function isolate(item){
         var mod = item.mod, src = item.src, name = changeCase.camelCase(mod.id);
-        item.src = `window.brk.${name}=function(brk){\n${src}}\n`;
+        item.src = `window.brk.${name}=function(brk){\n${src}};\n`;
         return item;
     }
     function commentize(item) {

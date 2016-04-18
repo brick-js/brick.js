@@ -36,7 +36,7 @@ describe('static', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'simple'), cfg)];
         sttc = Static(mods, cfg.static);
         var result = "// module: simple\nwindow.brk.simple=function(brk){\n"+
-            "console.log('am loaded');\n}";
+            "console.log('am loaded');\n};";
         return sttc.getJs().then(js => {
             return js.split('\n').slice(5).join('\n').trim();
         }).should.eventually.equal(result);
@@ -45,7 +45,7 @@ describe('static', function() {
     it('should handle null JS', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'fs'), cfg)];
         sttc = Static(mods, cfg.static);
-        var result = "// module: fs\nwindow.brk.fs=function(brk){\n}";
+        var result = "// module: fs\nwindow.brk.fs=function(brk){\n};";
         return sttc.getJs().then(js => {
             return js.split('\n').slice(5).join('\n').trim();
         }).should.eventually.equal(result);
