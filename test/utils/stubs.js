@@ -21,9 +21,11 @@ exports.expressResponse = {
 };
 
 exports.hbs = {
-    render: function(path, ctx, pctrl){
+    render: function(path, ctx, pmodularize, pctrl){
+        var result = '<div>hbs engine stub</div>';
+        result = pmodularize(result);
         pctrl('sub-module', ctx);
-        return BPromise.resolve('<div>hbs engine stub</div>');
+        return BPromise.resolve(result);
     }
 };
 

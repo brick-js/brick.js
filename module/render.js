@@ -13,26 +13,17 @@ var engines = {
 };
 var cache = {};
 
-var renderer = {
-    render: function(tplPath, ctx, pctrl, modName) {
-        return this.engine
-            .render(tplPath, ctx, pctrl)
-            .then(html => modularize(html, modName));
-    },
-    engine: engines.html
-};
-
 function factory(type) {
     return function(tplPath, ctx, pctrl, modName) {
         var engine = engines[type];
         assert(engine, `engine ${type} not found`);
+        var pmodularize = _.partial(modularize, modName);
         return engine
-            .render(tplPath, ctx, pctrl)
-            .then(html => modularize(html, modName));
+            .render(tplPath, ctx, pmodularize, pctrl);
     };
 }
 
-function modularize(html, modName) {
+function modularize(modName, html) {
     html = '<div>' + html.trim() + '</div>';
     var $ = cheerio.load(html),
         ele = $('div');

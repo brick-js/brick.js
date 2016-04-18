@@ -23,12 +23,6 @@ describe('render', function() {
         before(function() {
             Render.register('liquid', stubs.hbs);
         });
-        it('should do modularization', function() {
-            var render = Render.factory('liquid');
-            var result = '<div class="brk-a">hbs engine stub</div>';
-            return render('a.hbs', {}, x => x, 'a')
-                .should.eventually.equal(result);
-        });
         it('should call pctrl', function() {
             var render = Render.factory('liquid');
             var ctx = {
