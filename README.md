@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master)
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
-A HMVC style web-dev framework for Node.js, 
+A HMVC style web app development framework for Node.js, 
 The entire Web App is break down into independent modules.
 
 A *module* is consisted of 
