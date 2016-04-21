@@ -6,9 +6,9 @@
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
 A HMVC style web app development framework for Node.js, 
-The entire Web App is break down into independent modules.
+The entire Web App is break down into independent bricks.
 
-A *module* is consisted of 
+A *brick* is consisted of 
 
 * styles,
 * templates,
@@ -45,7 +45,7 @@ var Liquid = require('brick-liquid');
 var less = require('brick-less');
 
 var brk = brickJs({
-    root: path.join(__dirname, 'modules')
+    root: path.join(__dirname, 'bricks')
 });
 
 // register engines and processors for brick.js
@@ -62,7 +62,7 @@ app.listen(3000, function () {
 
 ## Tutorial
 
-* [How to create a simple module?][simple-module]
+* [How to create a simple brick?][simple-brick]
 * [How to add CSS and client-side JS?][css-and-js]
 * [How to customize the error page?][error-page]
 
@@ -80,12 +80,12 @@ var Liquid = require('brick-liquid');
 var less = require('brick-less');
 
 var brk = brickJs({
-    root: path.join(__dirname, 'modules'),
+    root: path.join(__dirname, 'bricks'),
     html: {
         entry: 'index.html',
         engine: 'liquid'        // default template engine,
-                                // modules may specify its own engine in package.json
-                                // see: https://github.com/brick-js/brick.js/wiki/a-simple-module
+                                // bricks may specify its own engine in package.json
+                                // see: https://github.com/brick-js/brick.js/wiki/a-simple-brick
     },
     server: {
         entry: 'server.js'
@@ -101,27 +101,27 @@ var brk = brickJs({
         css: {
             url: 'my-custom-url.css',
             file: path.resolve(__dirname, '.build/site.css'),
-            comment: '/* module: %s */',
+            comment: '/* brick: %s */',
         },
         js: {
             url: 'my-custom-url.js',
             file: path.resolve(__dirname, '.build/site.js'),
-            comment: '// module: %s'
+            comment: '// brick: %s'
         }
     }
 });
 
 brk.engine('liquid', new Liquid());
-brk.processor('less', less({root: path.join(__dirname, 'modules')}));
+brk.processor('less', less({root: path.join(__dirname, 'bricks')}));
 ```
 
 ### root
 
 Type: `String`
 
-Default: `path.join(__dirname, 'modules')`
+Default: `path.join(__dirname, 'bricks')`
 
-`root` is where the modules are located. Each module should be a folder consists of files specified by `path`.
+`root` is where the bricks are located. Each brick should be a folder consists of files specified by `path`.
 
 ### html.entry, css.entry, client.entry, server.entry
 
@@ -129,7 +129,7 @@ Type: `String`
 
 Default: `'index.html'`, `'index.css'`, `'client.js'`, `'server.js'`
 
-Default file name for HTML/CSS/Client-Side-JavaScript/Server-Side-Javascript in the module folder, see [`root`](#root).
+Default file name for HTML/CSS/Client-Side-JavaScript/Server-Side-Javascript in the brick folder, see [`root`](#root).
 
 ### html.engine
 
@@ -166,7 +166,7 @@ Set this for building purpose. Ex: `'/Users/harttle/hello-world/.build/xxxxx.css
 When set to `false`, the css/js file won't be saved. 
 
 [express]: http://expressjs.com/en/index.html 
-[simple-module]: https://github.com/brick-js/brick.js/wiki/a-simple-module
+[simple-brick]: https://github.com/brick-js/brick.js/wiki/a-simple-brick
 [brick-hbs]: https://github.com/brick-js/brick-hbs
 [brick-liquid]: https://github.com/brick-js/brick-liquid
 [demo]: https://github.com/brick-js/brick-demo

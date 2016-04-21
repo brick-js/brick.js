@@ -26,7 +26,7 @@ Router.prototype.mountModules = function(modules){
     _.forOwn(modules, mod => {
         if(this.mountModule(mod)) count++;
     });
-    debug(`${count}/${modules.length} modules loaded`);
+    debug(`${count}/${modules.length} modules mounted`);
 };
 
 Router.prototype.mountModule = function(mod){

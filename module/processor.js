@@ -39,9 +39,6 @@ function css(type, mod){
     var rootClass = `.brk-${changeCase.paramCase(mod.id)}`;
     return x => {
         var processor = processors[type];
-
-        debug(type, processor)
-
         assert(processor, `processor ${type} not found`);
         return processor.render(mod.css.path, rootClass);
     };
@@ -55,10 +52,11 @@ function js(type, mod){
     };
 }
 
-function register(type, processor){
+function register(type, processor, root){
     assert(processor, `processor must not be null`);
     assert(typeof processor.render === 'function', 
         `processor.render(${type}) must be a function`);
+    processor.root = root;
     return processors[type] = processor;
 }
 

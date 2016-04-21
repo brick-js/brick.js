@@ -3,7 +3,7 @@ const process = require('process');
 const path = require('path');
 
 var config = {
-    root: path.resolve(process.cwd(), 'modules'),
+    root: path.resolve(process.cwd(), 'bricks'),
     html: {
         entry: 'index.html'
     },
@@ -20,12 +20,12 @@ var config = {
         css: {
             url: '/104097114116116108101.css',
             file: false,
-            comment: '/* module: %s */'
+            comment: '/* brick: %s */'
         },
         js: {
             url: '/104097114116116108101.js',
             file: false,
-            comment: '// module: %s'
+            comment: '// brick: %s'
         }
     },
     set: function(k, v) {

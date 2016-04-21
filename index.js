@@ -9,7 +9,9 @@ var debug = require('debug')('brick:index');
 
 var brick = {
     engine: (type, engine) => Render.register(type, engine),
-    processor: (type, processor) => Processor.register(type, processor)
+    processor: function(type, processor) {
+        Processor.register(type, processor, this.root);
+    }
 };
 
 function factory(cfg){
@@ -24,7 +26,9 @@ function factory(cfg){
     router.mountErrorHandlers();
 
     var brk = Object.create(brick);
+    brk.root = cfg.root;
     brk.express = router.get();
+
     return brk;
 }
 
