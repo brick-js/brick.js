@@ -40,7 +40,7 @@ window.brk = {};
 
     function brkFactory(mod) {
         return {
-            module: camelCase(mod), 
+            name: camelCase(mod), 
             console: {
                 log: console.log.bind(console, '[' + mod + ']'),
                 info: console.info.bind(console, '[' + mod + ']'),
