@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master)
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
-A HMVC style web-dev framework for Node.js, 
+A HMVC style web app development framework for Node.js, 
 The entire Web App is break down into independent modules.
 
 A *module* is consisted of 
@@ -42,12 +42,15 @@ var express = require('express');
 var path = require('path');
 var brickJs = require('brick.js');
 var Liquid = require('brick-liquid');
+var less = require('brick-less');
 
 var brk = brickJs({
     root: path.join(__dirname, 'modules')
 });
 
+// register engines and processors for brick.js
 brk.engine('liquid', new Liquid());
+brk.processor('less', less());      // see https://github.com/brick-js/brick-less
 
 var app = express();
 app.use('/', brk.express);
@@ -80,14 +83,16 @@ var brk = brickJs({
     root: path.join(__dirname, 'modules'),
     html: {
         entry: 'index.html',
-        engine: 'liquid'
+        engine: 'liquid'        // default template engine,
+                                // modules may specify its own engine in package.json
+                                // see: https://github.com/brick-js/brick.js/wiki/a-simple-module
     },
     server: {
         entry: 'server.js'
     },
     css: {
         entry: 'index.less',
-        processor: 'less'
+        processor: 'less'       // default CSS pre-processor
     }
     client:{
         entry: 'client.js'
