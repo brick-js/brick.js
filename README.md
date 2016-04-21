@@ -62,7 +62,7 @@ app.listen(3000, function () {
 
 ## Tutorial
 
-* [How to create a simple brick?][simple-brick]
+* [What's a brick?][simple-brick]
 * [How to add CSS and client-side JS?][css-and-js]
 * [How to customize the error page?][error-page]
 
@@ -166,7 +166,7 @@ Set this for building purpose. Ex: `'/Users/harttle/hello-world/.build/xxxxx.css
 When set to `false`, the css/js file won't be saved. 
 
 [express]: http://expressjs.com/en/index.html 
-[simple-brick]: https://github.com/brick-js/brick.js/wiki/a-simple-brick
+[simple-brick]: https://github.com/brick-js/brick.js/wiki/What's-a-brick%3F
 [brick-hbs]: https://github.com/brick-js/brick-hbs
 [brick-liquid]: https://github.com/brick-js/brick-liquid
 [demo]: https://github.com/brick-js/brick-demo
