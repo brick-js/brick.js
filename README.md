@@ -6,14 +6,22 @@
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
 A HMVC style web app development framework for Node.js, 
-The entire Web App is break down into independent bricks.
+The entire Web App is break down into independent *bricks*.
 
-A *brick* is consisted of 
+### Features
 
-* styles,
-* templates,
-* scripts,
-* and a server-side controller.
+* CSS in each *brick* will be modularized and binded to you HTML
+* Client-side JS in each *brick* will be parsed as a CommonJS module.
+* HTML templates in each *brick* can include/extend another *brick*.
+* Server-side JS in each *brick* will be executed (and context will be injected into HTML tempaltes) when included or extended.
+
+## Tutorial
+
+* [What's a brick?][simple-brick]
+* [How to add CSS and client-side JS?][css-and-js]
+* [How to customize the error page?][error-page]
+
+For usage details and contribution guide, see: [brick.js wiki][wiki]
 
 ## The Demo
 
@@ -59,14 +67,6 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 ```
-
-## Tutorial
-
-* [What's a brick?][simple-brick]
-* [How to add CSS and client-side JS?][css-and-js]
-* [How to customize the error page?][error-page]
-
-For usage and contribution guide, see: [brick.js wiki][wiki]
 
 ## Options
 
