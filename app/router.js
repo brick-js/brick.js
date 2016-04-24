@@ -4,7 +4,6 @@ var Render = require('../module/render');
 var _ = require('lodash');
 var debug = require('debug')('brick:router');
 var http = require('../io/http');
-var errorHandler = require('./error');
 
 function Router(config) {
     this.config = config;
@@ -44,9 +43,35 @@ Router.prototype.mountModule = function(mod){
 };
 
 Router.prototype.mountErrorHandlers = function(){
-    this.expressRouter.use(errorHandler.catch404);
-    this.expressRouter.use(errorHandler.errorPage);
-    this.expressRouter.use(errorHandler.fallback);
+    var jsUrl = this.config.static.js.url;
+    var cssUrl = this.config.static.css.url;
+
+    this.expressRouter.use(function(req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
+    });
+
+    // customized error page
+    this.expressRouter.use(function(err, req, res, next) {
+        debug('user defined error page');
+        var mod = Module.get('error');
+        if (!mod) return next(err); // apply default error handler
+
+        mod.ctrl(req, {
+                error: err
+            })
+            .then(html => Render.linkStatic(html, jsUrl, cssUrl))
+            .then(html => http.html(res, html, err.status || 500))
+            .catch(next);
+    });
+
+    // default error handler
+    this.expressRouter.use(function(err, req, res, next) {
+        console.error(err.stack || err);
+        var html = `<pre><code>${err.stack}</code></pre>`;
+        http.html(res, html, err.status || 500);
+    });
 };
 
 module.exports = config => new Router(config);

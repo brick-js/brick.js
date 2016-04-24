@@ -30,6 +30,12 @@
         };
         var className = '.brk-' + id;
         mod.elements = document.querySelectorAll(className);
+        mod.require = function(mid){
+            var dep = brick.require(mid);
+            dep.parent = mod;
+            mod.children.push(dep);
+            return dep.exports;
+        };
         moduleCache[id] = mod;
         return mod;
     }
@@ -53,13 +59,7 @@
         if(pending[module.id]) return module;
         pending[module.id] = true;
 
-        function require(id){
-            var dep = brick.require(id);
-            dep.parent = module;
-            module.children.push(dep);
-            return dep.exports;
-        }
-        defines[module.id](require, module.exports, module);
+        defines[module.id](module.require, module.exports, module);
         module.loaded = true;
 
         pending[module.id] = false;
