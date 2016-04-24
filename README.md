@@ -8,7 +8,7 @@
 A HMVC style web app development framework for Node.js, 
 The entire Web App is break down into independent *bricks*.
 
-* CSS in each *brick* will be modularized and binded to you HTML
+* CSS in each *brick* will be modularized and applied to corresponding HTML
 * Client-side JS in each *brick* will be parsed as a CommonJS module.
 * HTML templates in each *brick* can include/extend another *brick*.
 * Server-side JS in each *brick* will be executed (and context will be injected into HTML tempaltes) when included or extended.
