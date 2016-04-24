@@ -33,8 +33,8 @@ describe('render', function() {
             return assert(pctrl.calledWith('sub-module', ctx));
         });
         it('should modularize html', function() {
-            var src = '\n  \t\n<div></div>';
-            var res = '<div class="brk-nav-bar"></div>';
+            var src = '<!DOCTYPE\n html> \t\n<div></div>';
+            var res = '<!DOCTYPE\n html> \t\n<div class="brk-nav-bar"></div>';
             Render.modularize('navBar', src).should.equal(res);
         });
         it('modularize should respect existing attributes', function() {
@@ -66,8 +66,8 @@ describe('render', function() {
             return Render.linkStatic(src, 'foo', 'bar').should.equal(res);
         });
         it('should handle normal <html>', function(){
-            var src = '<html><head><meta charset="utf-8"></head><body></body></html>';
-            var res = `<html><head><meta charset="utf-8">${link}</head><body>${script}</body></html>`;
+            var src = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body></body></html>';
+            var res = `<!DOCTYPE html><html><head><meta charset="utf-8">${link}</head><body>${script}</body></html>`;
             return Render.linkStatic(src, 'foo', 'bar').should.equal(res);
         });
         it('should handle null <head>', function(){

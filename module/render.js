@@ -26,30 +26,38 @@ function factory(type) {
 // it's quite difficult to parse HTML element
 function modularize(modName, html) {
     var cls = 'brk-' + changeCase.paramCase(modName);
-    html = html.trim();
 
-    if(html.length && html[0] == '<'){
-        var spliter = html.indexOf('>');
-        if(spliter >= 0){
-            var first = html.slice(0, spliter);
-            var second = html.slice(spliter);
+    // there's a <x
+    if(/<\w/.test(html)){       
+        var header = '', body = '', footer = '';
+        var match = html.match(/<\w/); 
+        var begin = match.index;
+        // before tab
+        header = html.substr(0, begin);   
 
-            var hasClass = / class=["']/.test(first);
+        var end = html.indexOf('>', begin);
+        // there's a >
+        if(end >= 0){               
+            // before >
+            body = html.slice(begin, end);
+            // after (include) >
+            footer = html.substr(end);
+
+            var hasClass = / class=["']/.test(body);
             if(hasClass){
-                first = first.replace(/ class=["']/, match => match + cls + ' ');
+                body = body.replace(/ class=["']/, match => match + cls + ' ');
             }
             else{
-                var idx = first.indexOf(' ');
+                var idx = body.indexOf(' ');
                 if(idx >= 0){
-                    first = first.replace(' ', ` class="${cls}" `);
+                    body = body.replace(' ', ` class="${cls}" `);
                 }
                 else{
-                    first = `${first} class="${cls}"`;
+                    body = `${body} class="${cls}"`;
                 }
             }
-            return first + second;
+            return header + body + footer;
         }
-        
     }
     return `<div class='${cls}'>${html}</div>`;
 }
