@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const debug = require('debug')('brick:module:render');
-const cheerio = require('cheerio');
 const changeCase = require('change-case');
 const assert = require('assert');
 const BPromise = require('bluebird');
@@ -23,13 +22,36 @@ function factory(type) {
     };
 }
 
+// naive implementation
+// it's quite difficult to parse HTML element
 function modularize(modName, html) {
-    html = '<div>' + html.trim() + '</div>';
-    var $ = cheerio.load(html),
-        ele = $('div');
-    cls = 'brk-' + changeCase.paramCase(modName);
-    ele.children().first().addClass(cls);
-    return ele.html();
+    var cls = 'brk-' + changeCase.paramCase(modName);
+    html = html.trim();
+
+    if(html.length && html[0] == '<'){
+        var spliter = html.indexOf('>');
+        if(spliter >= 0){
+            var first = html.slice(0, spliter);
+            var second = html.slice(spliter);
+
+            var hasClass = / class=["']/.test(first);
+            if(hasClass){
+                first = first.replace(/ class=["']/, match => match + cls + ' ');
+            }
+            else{
+                var idx = first.indexOf(' ');
+                if(idx >= 0){
+                    first = first.replace(' ', ` class="${cls}" `);
+                }
+                else{
+                    first = `${first} class="${cls}"`;
+                }
+            }
+            return first + second;
+        }
+        
+    }
+    return `<div class='${cls}'>${html}</div>`;
 }
 
 function register(type, engine) {
@@ -39,20 +61,34 @@ function register(type, engine) {
     return engines[type] = engine;
 }
 
+// naive implementation
 function linkStatic(html, jsUrl, cssUrl) {
-    var $ = cheerio.load(html),
-        $head = $('head');
+    var script = `<script src="${jsUrl}"></script>`;
+    var link = `<link rel="stylesheet" href="${cssUrl}">`;
 
-    if ($head.length === 0) $head = $('html');
-    if ($head.length === 0) $head = $('body');
-    if ($head.length === 0) $head = $.root();
+    if(/<\/head>/.test(html)){
+        html = html.replace('</head>', `${link}</head>`);
+    }
+    else if(/<\/body>/.test(html)){
+        html = html.replace('</body>', `${link}</body>`);
+    }
+    else if(/<\/html>/.test(html)){
+        html = html.replace('</html>', `${link}</html>`);
+    }
 
-    $head
-        .append($('<script></script>').attr('src', jsUrl))
-        .prepend($('<link rel="stylesheet">').attr('href', cssUrl));
-    return $.html();
+    if(/<\/body>/.test(html)){
+        html = html.replace('</body>', `${script}</body>`);
+    }
+    else if(/<\/head>/.test(html)){
+        html = html.replace('</head>', `${script}</head>`);
+    }
+    else if(/<\/html>/.test(html)){
+        html = html.replace('</html>', `${script}</html>`);
+    }
+    return html;
 }
 
 exports.factory = type => cache[type] || (cache[type] = factory(type));
 exports.register = register;
 exports.linkStatic = linkStatic;
+exports.modularize = modularize;

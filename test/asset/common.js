@@ -41,7 +41,7 @@ describe('common.js', function() {
         window.brick.register('dep', (r, e, m) => e.foo = 'bar');
         document.load();
     });
-    describe('CommonJS (Node.js) compliance', function(){
+    describe('CommonJS (Node.js styled) compliance', function(){
         it('should have correct id property', function(){
             window.brick.register('simple-mod', (r, e, m) => 
                 m.id.should.equal('simple-mod'));
