@@ -8,6 +8,9 @@ const assert = require('assert');
 const config = require('../../config.js');
 const wmd = require('../../module/wmd');
 const Static = require('../../app/static');
+const processor = require('../../module/processor.js');
+const fs = require('../../io/fs');
+var loader = fs.readSync(Path.resolve(__dirname, '../../assets/common.js'));
 
 describe('static', function() {
     var mods, sttc, cfg;
@@ -15,40 +18,38 @@ describe('static', function() {
     before(function() {
         cfg = config.factory(stubs.brickConfig);
         render.register('hbs', stubs.hbs);
+        processor.register('css', require('../../processors/css'));
+        processor.register('js', require('../../processors/js'));
     });
 
     it('should get simple CSS', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'simple'), cfg)];
         sttc = Static(mods, cfg.static);
         var result = '/* brick: simple */\n.brk-simple div {\n' +
-            '  color: red;\n}\n\n';
+            '  color: red;\n}\n';
         return sttc.getCss().should.eventually.equal(result);
     });
 
     it('should handle null CSS', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'fs'), cfg)];
         sttc = Static(mods, cfg.static);
-        var result = '/* brick: fs */\n\n';
-        return sttc.getCss().should.eventually.equal(result);
+        return sttc.getCss().should.eventually.equal('');
     });
 
     it('should get simple JS', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'simple'), cfg)];
         sttc = Static(mods, cfg.static);
-        var result = "// brick: simple\nwindow.brk.simple=function(brk){\n"+
-            "console.log('am loaded');\n};";
-        return sttc.getJs().then(js => {
-            return js.split('\n').slice(5).join('\n').trim();
-        }).should.eventually.equal(result);
+        var result = loader + '\n// brick: simple\n' + 
+            'window.brick.register("simple", function(require, exports, module){\n'+
+                "console.log('am loaded');\n" +
+            '});';
+        return sttc.getJs().should.eventually.equal(result);
     });
 
     it('should handle null JS', function() {
         mods = [wmd.loadModule(Path.resolve(cfg.root, 'fs'), cfg)];
         sttc = Static(mods, cfg.static);
-        var result = "// brick: fs\nwindow.brk.fs=function(brk){\n};";
-        return sttc.getJs().then(js => {
-            return js.split('\n').slice(5).join('\n').trim();
-        }).should.eventually.equal(result);
+        return sttc.getJs().should.eventually.equal(loader);
     });
 });
 

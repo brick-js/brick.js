@@ -17,6 +17,10 @@ describe('module', function() {
     require('./module/processor');
 });
 
+describe('asset', function() {
+    require('./asset/common.js');
+});
+
 describe('app', function() {
     require('./app/static');
 });

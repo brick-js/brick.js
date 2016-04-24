@@ -1,39 +1,10 @@
-const less = require('less');
 const _ = require('lodash');
 const changeCase = require('change-case');
 const debug = require('debug')('brick:module:processor');
-const BPromise = require('bluebird');
 const assert = require('assert');
-const process = require('process');
-const path = require('path');
-const fs = require('../io/fs');
 
-var processors = {
-    js: {
-        render: path => fs.read(path)
-    },
-    css: {
-        render: (path, rootClass) => {
-            function compile(src) {
-                return new BPromise((resolve, reject) => {
-                    less.render(src, (e, output) => {
-                        return e ? reject(parseError(e)) : resolve(output.css);
-                    });
-                });
-
-                function parseError(e){
-                    return {
-                        message: e.message,
-                        stack: JSON.stringify(e, null, 4)
-                    };
-                }
-            }
-            return fs.read(path)
-                .then(src => `${rootClass}{\n${src}\n}\n`)
-                .then(compile);
-        }
-    }
-};
+var processors = {};
+var cache = {};
 
 function css(type, mod){
     var rootClass = `.brk-${changeCase.paramCase(mod.id)}`;
@@ -60,7 +31,6 @@ function register(type, processor, root){
     return processors[type] = processor;
 }
 
-var cache = {};
 function cacheable(cb, type, mod){
     var k = `${type}/${mod.id}`;
     return cache[k] || (cache[k] = cb(type, mod));
@@ -69,3 +39,5 @@ function cacheable(cb, type, mod){
 exports.css = (type, mod) => cacheable(css, type, mod);
 exports.js = (type, mod) => cacheable(js, type, mod);
 exports.register = register;
+exports.get = type => processors[type];
+

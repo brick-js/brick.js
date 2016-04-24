@@ -6,7 +6,8 @@ const changeCase = require('change-case');
 const debug = require('debug')('brick:app:static');
 const express = require('express');
 const BPromise = require('bluebird');
-const client = require('./client.js');
+const path = require('path');
+const loader = fs.readSync(path.resolve(__dirname, '../assets/common.js'));
 
 function Static(modules, config) {
     this.config = config;
@@ -16,6 +17,7 @@ function Static(modules, config) {
 Static.prototype.getCss = function() {
     var commentFmt = this.config.css.comment;
     return BPromise.resolve(this.modules)
+        .filter(mod => mod.css)
         .map(render)
         .map(commentize)
         .then(combine);
@@ -29,17 +31,18 @@ Static.prototype.getCss = function() {
         var src = item.src,
             mod = item.mod,
             comment = util.format(commentFmt, mod.id);
-        return `${comment}\n${src}\n`;
+        return `${comment}\n${src}`;
     }
 };
 
 Static.prototype.getJs = function() {
     var commentFmt = this.config.js.comment;
     return BPromise.resolve(this.modules)
+        .filter(mod => mod.client)
         .map(render)
         .map(isolate)
         .map(commentize)
-        .then(files => [client.loader].concat(files))
+        .then(files => [loader].concat(files))
         .then(combine);
 
     function render(mod) {
@@ -47,15 +50,16 @@ Static.prototype.getJs = function() {
             : { src: '', mod: mod };
     }
     function isolate(item){
-        var mod = item.mod, src = item.src, name = changeCase.camelCase(mod.id);
-        item.src = `window.brk.${name}=function(brk){\n${src}};\n`;
+        var mod = item.mod, src = item.src, name = changeCase.paramCase(mod.id);
+        item.src = `window.brick.register("${name}", ` + 
+            `function(require, exports, module){\n${src}});`;
         return item;
     }
     function commentize(item) {
         var src = item.src,
             mod = item.mod,
             comment = util.format(commentFmt, mod.id);
-        return `${comment}\n${src}\n`;
+        return `${comment}\n${src}`;
     }
 };
 
@@ -80,7 +84,9 @@ Static.prototype.express = function() {
 };
 
 function combine(files) {
-    return files.reduce((prev, next) => prev + next, '');
+    return files.length ? 
+        files.reduce((prev, next) => prev  + '\n' + next) :
+        '';
 }
 
 module.exports = (mods, config) => new Static(mods, config);

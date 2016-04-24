@@ -13,6 +13,8 @@ var brick = {
         Processor.register(type, processor, this.root);
     }
 };
+brick.processor('js', require('./processors/js'));
+brick.processor('css', require('./processors/css'));
 
 function factory(cfg){
     cfg = config.factory(cfg);
