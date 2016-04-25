@@ -15,9 +15,6 @@ The entire Web App is break down into independent *bricks*.
 
 ## Tutorial
 
-
-### Usage Guide
-
 * [What's a brick?](https://github.com/harttle/brick.js/wiki/What's-a-brick%3F)
 * [How does Brick.JS modularize your CSS?](https://github.com/brick-js/brick.js/wiki/CSS-Modularization)
 * [How to write client-side JS (CommonJS Style)?](https://github.com/brick-js/brick.js/wiki/JS-Modularization)
