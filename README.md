@@ -17,7 +17,7 @@ The entire Web App is break down into independent *bricks*.
 
 * [What's a brick?](https://github.com/harttle/brick.js/wiki/What's-a-brick%3F)
 * [How does Brick.JS modularize your CSS?](https://github.com/brick-js/brick.js/wiki/CSS-Modularization)
-* [How to write client-side JS (CommonJS Style)?](https://github.com/brick-js/brick.js/wiki/JS-Modularization)
+* [How to write client-side JS?](https://github.com/brick-js/brick.js/wiki/JS-Modularization)
 * [How to customize the error page?](https://github.com/brick-js/brick.js/wiki/customize-the-error-page)
 
 For usage details and contribution guide, see: [brick.js wiki][wiki]
