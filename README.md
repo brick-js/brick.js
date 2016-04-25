@@ -15,9 +15,10 @@ The entire Web App is break down into independent *bricks*.
 
 ## Tutorial
 
-* [What's a brick?][simple-brick]
-* [How to add CSS and client-side JS?][css-and-js]
-* [How to customize the error page?][error-page]
+* [What's a brick?](https://github.com/harttle/brick.js/wiki/What's-a-brick%3F)
+* [How does Brick.JS modularize your CSS?](https://github.com/brick-js/brick.js/wiki/CSS-Modularization)
+* [How to write client-side JS?](https://github.com/brick-js/brick.js/wiki/JS-Modularization)
+* [How to customize the error page?](https://github.com/brick-js/brick.js/wiki/customize-the-error-page)
 
 For usage details and contribution guide, see: [brick.js wiki][wiki]
 
@@ -164,13 +165,11 @@ Set this for building purpose. Ex: `'/Users/harttle/hello-world/.build/xxxxx.css
 When set to `false`, the css/js file won't be saved. 
 
 [express]: http://expressjs.com/en/index.html 
-[simple-brick]: https://github.com/brick-js/brick.js/wiki/What's-a-brick%3F
 [brick-hbs]: https://github.com/brick-js/brick-hbs
 [brick-liquid]: https://github.com/brick-js/brick-liquid
 [demo]: https://github.com/brick-js/brick-demo
 [wiki]: https://github.com/brick-js/brick.js/wiki
 [error-page]: https://github.com/brick-js/brick.js/wiki/customize-error-page
-[css-and-js]: https://github.com/brick-js/brick.js/wiki/css-and-js
 [param-case]: https://github.com/blakeembrey/param-case
 [tpl-contrib]: https://github.com/brick-js/brick.js/wiki/Template-Engine-Interface
 [brick-less]: https://github.com/brick-js/brick-less
