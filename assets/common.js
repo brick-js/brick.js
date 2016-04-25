@@ -1,43 +1,69 @@
 // CommonJS for built-in JS processor
 (function(window, document) {
-    var moduleCache = {};
-    var defines = {};
-    var pending = {};
 
-    var brick = {
-        logger: console.log.bind(console, '[Brick.JS]'),
+    var CommonJS = {
         require: function(id) {
-            var mod = moduleCache [id];
+            var mod = CommonJS.moduleCache[id];
             if (!mod) throw ('required module not found: ' + id);
-            return mod.loaded ? mod : exec(mod);
+            return (mod.loaded || CommonJS.pending[id]) ? 
+                mod : CommonJS.exec(mod);
         },
         register: function(id, define) {
             if (typeof define !== 'function')
                 throw ('Invalid CommonJS module: ' + define);
-            var mod = createModule(id);
-            defines[id] = define;
-        }
+            var mod = factory(id);
+            CommonJS.defines[id] = define;
+        },
+        exec: function(module) {
+            CommonJS.pending[module.id] = true;
+
+            var define = CommonJS.defines[module.id];
+            define(module.require.bind(module), module.exports, module);
+            module.loaded = true;
+
+            CommonJS.pending[module.id] = false;
+            return module;
+        },
+        moduleCache : {},
+        defines : {},
+        pending : {} 
     };
 
-    function createModule(id){
-        id = paramCase(id);
-        var mod = {
-            id: id,
-            loaded: false,
-            parent: null,
-            children: [],
-            exports: {},
-        };
-        var className = '.brk-' + id;
-        mod.elements = document.querySelectorAll(className);
-        mod.require = function(mid){
-            var dep = brick.require(mid);
-            dep.parent = mod;
-            mod.children.push(dep);
+    var module = {
+        require: function(mid) {
+            var dep = CommonJS.require(mid);
+            dep.parent = this;
+            this.children.push(dep);
             return dep.exports;
-        };
-        moduleCache[id] = mod;
-        return mod;
+        },
+        loaded: false,
+        parent: null
+    };
+
+    function factory(id) {
+        var mod = Object.create(module);
+        mod.id = id;
+        mod.children = [];
+        mod.exports = {};
+        mod.elements = document.querySelectorAll('.brk-' + id);
+        return CommonJS.moduleCache[id] = mod;
+    }
+
+    DOMReady(function() {
+        entries(function(moduleName) {
+            var mod = CommonJS.moduleCache[moduleName];
+            mod && CommonJS.exec(mod);
+        });
+    });
+
+    function DOMReady(cb) {
+        if (document.addEventListener)
+            document.addEventListener('DOMContentLoaded', cb, false);
+        else if (document.attachEvent) {
+            document.attachEvent("onreadystatechange", function() {
+                if (document.readyState === "complete") cb();
+            });
+        }
     }
 
     function entries(cb) {
@@ -55,42 +81,5 @@
         });
     }
 
-    function exec(module) {
-        if(pending[module.id]) return module;
-        pending[module.id] = true;
-
-        defines[module.id](module.require, module.exports, module);
-        module.loaded = true;
-
-        pending[module.id] = false;
-        return module;
-    }
-
-    DOMReady(function() {
-        entries(function(moduleName) {
-            var mod = moduleCache[moduleName];
-            mod && exec(mod);
-        });
-    });
-
-
-    function paramCase(str) {
-        return str
-            .replace(/(?:\w)[A-Z]/g, function(c) {
-                return c[0] + '-' + c[1];
-            })
-            .toLowerCase();
-    }
-
-    function DOMReady(cb){
-        if (document.addEventListener)
-            document.addEventListener('DOMContentLoaded', cb, false);
-        else if (document.attachEvent) {
-            document.attachEvent("onreadystatechange", function() {
-                if (document.readyState === "complete") cb();
-            });
-        }
-    }
-
-    window.brick = brick;
+    window.brick = CommonJS;
 })(window, document);
