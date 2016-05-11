@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 exports.brickConfig = {
     root: path.resolve(__dirname, '../cases'),
-    view: 'view.html', 
+    view: 'view.html',
     server: 'server.js'
 };
 
@@ -18,9 +18,12 @@ exports.hbs = {
     render: function(path, ctx, pmodularize, pctrl) {
         var result = '<div>hbs engine stub</div>';
         result = pmodularize(result);
-        pctrl('sub-module', ctx);
-        return BPromise.resolve(result);
+        return pctrl('simple', ctx).then(html => result);
     }
+};
+
+exports.pctrl = function() {
+    return BPromise.resolve('<html>Stub</html>');
 };
 
 exports.stylus = {
@@ -31,5 +34,17 @@ exports.stylus = {
 
 exports.module = {
     id: 'mod'
+};
+
+exports.req = {
+    app: {
+        locals: {}
+    }
+};
+
+exports.ctx = {
+    foo: 'bar',
+    bar: 123,
+    arr: [1, 'ff']
 };
 

@@ -20,14 +20,21 @@ describe('render', function() {
             Render.register('hbs', stubs.hbs);
         }).should.not.throw();
     });
+    it('should provide default .html renderer', function() {
+        Render.get('.html').should.be.a('function');
+    });
+    it('should render html by default', function() {
+        var f = Path.resolve(__dirname, '../cases/inCom_plete/view.html');
+        return Render.get('.html')(f).should.eventually.equal('Hello!\n')
+    });
     it('should call pctrl', function() {
         var render = Render.get('.liquid');
         var ctx = {
             foo: 'bar'
         };
-        var pctrl = sinon.spy();
+        var pctrl = sinon.spy(stubs.pctrl);
         render('a.hbs', ctx, pctrl, 'a');
-        return assert(pctrl.calledWith('sub-module', ctx));
+        return assert(pctrl.calledWith('simple', ctx));
     });
     it('should modularize html', function() {
         var src = '<!DOCTYPE\n html> \t\n<div></div>';
