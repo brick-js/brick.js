@@ -27,9 +27,15 @@ describe('http', function() {
     });
     it('ok', function() {
         http.ok(res, 'application/json', 'xxx');
-        return assert(status.calledWith(200)) && 
-            assert(set.calledWith('Content-Type', 'application/json')) &&
-            assert(end.calledWith('xxx'));
+        assert(status.calledWith(200));
+        assert(set.calledWith('Content-Type', 'application/json'));
+        assert(end.calledWith('xxx'));
+    });
+    it('html', function() {
+        http.html(res, 'xxx', 201);
+        assert(status.calledWith(201));
+        assert(set.calledWith('Content-Type', 'text/html'));
+        assert(end.calledWith('xxx'));
     });
     it('notFound', function() {
         http.notFound(res);

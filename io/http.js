@@ -4,7 +4,7 @@ function send(res, type, status, content) {
     res
         .set('Content-Type', type)
         .status(status)
-        .end(content && new Buffer(content));
+        .end(content);
     return content;
 }
 
