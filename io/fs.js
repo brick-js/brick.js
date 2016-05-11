@@ -1,5 +1,4 @@
 var path = require('path');
-var debug = require('debug')('brick:io/fs');
 var BPromise = require("bluebird");
 var fs = BPromise.promisifyAll(require("fs"));
 

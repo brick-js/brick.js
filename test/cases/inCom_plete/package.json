@@ -1,9 +1,0 @@
-{
-  "html": {
-    "engine": "my-engine"
-  },
-  "client": {
-    "processor": "my-proc"
-  },
-  "server": { }
-}

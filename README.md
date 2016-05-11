@@ -5,114 +5,42 @@
 [![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master)
 [![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
 
-A HMVC style web app development framework for Node.js, 
-The entire Web App is break down into independent *bricks*.
+Scalable web development, one *brick* at a time!
 
-* CSS in each *brick* will be modularized and applied to corresponding HTML
-* Client-side JS in each *brick* will be parsed as a CommonJS module.
-* HTML templates in each *brick* can include/extend another *brick*.
-* Server-side JS in each *brick* will be executed (and context will be injected into HTML tempaltes) when included or extended.
+> Brick.JS is a HMVC style Web Application Framework for Node.js. 
+> The entire Web App is break down into a collection of interactive *bricks*.
 
-## Tutorial
+* CommonJS environment for browser-side JavaScript.
+* Template partials are associated with controllers.
+* Automatic CSS modularization.
 
-* [What's a brick?](https://github.com/harttle/brick.js/wiki/What's-a-brick%3F)
-* [How does Brick.JS modularize your CSS?](https://github.com/brick-js/brick.js/wiki/CSS-Modularization)
-* [How to write client-side JS?](https://github.com/brick-js/brick.js/wiki/JS-Modularization)
-* [How to customize the error page?](https://github.com/brick-js/brick.js/wiki/customize-the-error-page)
+See [Brick.JS Wiki Page][wiki] for tutorials.
 
-For usage details and contribution guide, see: [brick.js wiki][wiki]
+## Demo
 
-## The Demo
+[brick-js/brick-demo][demo] is a minimal demo project for Brick.JS
 
-[brick-js/brick-demo][demo] is a minimal demo project for brick.js. 
-
-To get started:
-
-```bash
-git clone git@github.com:brick-js/brick-demo.git --depth=1
-cd brick-demo && npm install
-node app.js
-```
-
-Open <http://localhost:3000> !
-
-## Minimal Usage
-
-Install brick.js and brick-liquid(Liquid Template Engine, see below):
-
-```bash
-npm install --save brick.js brick-liquid
-```
+## Usage
 
 ```javascript
 var express = require('express');
-var path = require('path');
 var brickJs = require('brick.js');
 var Liquid = require('brick-liquid');
-var less = require('brick-less');
 
 var brk = brickJs({
-    root: path.join(__dirname, 'bricks')
+    root: path.join(__dirname, 'bricks'),
+    view: 'view.html',
+    server: 'server.js'
 });
-
-// register engines and processors for brick.js
-brk.engine('liquid', new Liquid());
-brk.processor('less', less());      // see https://github.com/brick-js/brick-less
+brk.engine('.html', new Liquid());
 
 var app = express();
 app.use('/', brk.express);
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+app.listen(3000, x => console.log('listening to 3000'));
 ```
 
 ## Options
-
-### Full Usage
-
-```javascript
-var express = require('express');
-var path = require('path');
-var brickJs = require('brick.js');
-var Liquid = require('brick-liquid');
-var less = require('brick-less');
-
-var brk = brickJs({
-    root: path.join(__dirname, 'bricks'),
-    html: {
-        entry: 'index.html',
-        engine: 'liquid'        // default template engine,
-                                // bricks may specify its own engine in package.json
-                                // see: https://github.com/brick-js/brick.js/wiki/a-simple-brick
-    },
-    server: {
-        entry: 'server.js'
-    },
-    css: {
-        entry: 'index.less',
-        processor: 'less'       // default CSS pre-processor
-    }
-    client:{
-        entry: 'client.js'
-    },
-    static: {
-        css: {
-            url: 'my-custom-url.css',
-            file: path.resolve(__dirname, '.build/site.css'),
-            comment: '/* brick: %s */',
-        },
-        js: {
-            url: 'my-custom-url.js',
-            file: path.resolve(__dirname, '.build/site.js'),
-            comment: '// brick: %s'
-        }
-    }
-});
-
-brk.engine('liquid', new Liquid());
-brk.processor('less', less({root: path.join(__dirname, 'bricks')}));
-```
 
 ### root
 
@@ -120,49 +48,46 @@ Type: `String`
 
 Default: `path.join(__dirname, 'bricks')`
 
-`root` is where the bricks are located. Each brick should be a folder consists of files specified by `path`.
+Optional. The root directory containing your *bricks*.
 
-### html.entry, css.entry, client.entry, server.entry
+### view
+
+Type: `String` or `Array<String>`
+
+Default: `'view.html'`
+
+Optional. Template file entry(s) of your *brick*.
+Can be Array of Strings, eg: `['index.hbs', 'view.html']`.
+Brick.JS will look for corresponding template engine when rendering.
+
+### server
 
 Type: `String`
 
-Default: `'index.html'`, `'index.css'`, `'client.js'`, `'server.js'`
+Default: `'server.js'`
 
-Default file name for HTML/CSS/Client-Side-JavaScript/Server-Side-Javascript in the brick folder, see [`root`](#root).
+Optional. Server-side JavaScript, which `exports` a ExpressJS compliant `url`,
+and a `view` which accepts 3 arguments: `(req, done, fail)`.
 
-### html.engine
+## Template Engines
 
-Type: `Object`
+Template engines can be registered via `.engine(<ext>, <lib>)`.
 
-Template engine for brick.js. Available Template Engines:
+Available Template Engines:
 
 * [brick-hbs][brick-hbs]: Handlebars template engine for brick.js
 * [brick-liquid][brick-liquid]: Liquid template engine for brick.js
 
-Template Engine Development Guide: [Template Engine Interface][tpl-contrib]
+> Template Engine Development Guide: [Template Engine Interface][tpl-contrib]
 
-### css.processor
+## Static Assets
 
-CSS Pre-Processor for style files. Available pre-processors:
+Static assets for your *bricks* can be generated by [brick-asset][asset].
 
-* [brick-js/brick-less][brick-less]: LESS pre-processor for brick.js.
+> [brick-asset][asset] support CSS Pre-Processors like LESS.
 
-#### static.css.url, static.js.url
+Typically, you need `brick-asset all` before `node app.js`.
 
-Type: `String`
-
-Default: `'/104097114116116108101.css'`, `'/104097114116116108101.js'`
-
-Set this for deployment purpose. Ex: `'http://cdn.anyway.com/xxxxx.css'`
-
-#### static.css.file, static.js.file
-
-Type: `String`
-
-Default: `false`
-
-Set this for building purpose. Ex: `'/Users/harttle/hello-world/.build/xxxxx.css'`
-When set to `false`, the css/js file won't be saved. 
 
 [express]: http://expressjs.com/en/index.html 
 [brick-hbs]: https://github.com/brick-js/brick-hbs
@@ -172,4 +97,5 @@ When set to `false`, the css/js file won't be saved.
 [error-page]: https://github.com/brick-js/brick.js/wiki/customize-error-page
 [param-case]: https://github.com/blakeembrey/param-case
 [tpl-contrib]: https://github.com/brick-js/brick.js/wiki/Template-Engine-Interface
-[brick-less]: https://github.com/brick-js/brick-less
+[wiki]: https://github.com/harttle/brick.js/wiki
+[asset]: https://github.com/brick-js/brick-asset

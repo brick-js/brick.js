@@ -1,17 +1,6 @@
 {
   "name": "sample-module",
   "version": "1.0.0",
-  "html": {
-    "entry": "htmls/my-html.hbs"
-  },
-  "css": {
-    "entry": "main.less",
-    "processor": "stylus"
-  },
-  "client": {
-    "entry": "entry.js"
-  },
-  "server": {
-    "entry": "svr.js"
-  }
+  "view": "htmls/my-html.hbs",
+  "server": "svr.js"
 }

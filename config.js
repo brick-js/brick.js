@@ -1,33 +1,12 @@
 const _ = require('lodash');
 const process = require('process');
 const path = require('path');
+const debug = require('debug')('brick:config');
 
 var config = {
     root: path.resolve(process.cwd(), 'bricks'),
-    html: {
-        entry: 'index.html'
-    },
-    css: {
-        entry: 'index.css'
-    },
-    client: {
-        entry: 'client.js'
-    },
-    server: {
-        entry: 'server.js'
-    },
-    static: {
-        css: {
-            url: '/104097114116116108101.css',
-            file: false,
-            comment: '/* brick: %s */'
-        },
-        js: {
-            url: '/104097114116116108101.js',
-            file: false,
-            comment: '// brick: %s'
-        }
-    },
+    view: 'view.html',
+    server: 'server.js',
     set: function(k, v) {
         this[k] = v;
         return this;
@@ -37,8 +16,8 @@ var config = {
     }
 };
 
-function factory(args) {
-    return _.merge({}, config, args);
-}
+exports.factory = function(args){
+    var cfg = _.merge({}, config, args);
+    return cfg;
+};
 
-exports.factory = factory;
