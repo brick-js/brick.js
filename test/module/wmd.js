@@ -1,6 +1,7 @@
 const env = require('../utils/env');
 const Render = require('../../module/render.js');
 const should = env.should;
+const assert = require('assert');
 const Path = require('path');
 const sinon = require('sinon');
 const stubs = require('../utils/stubs');
@@ -14,6 +15,7 @@ describe('wmd', function() {
     before(function() {
         cfg = config.factory(stubs.brickConfig);
         mods = wmd.loadAll(cfg);
+        Render.register('.hbs', stubs.hbs);
     });
     it('should accept array of views', function() {
         var _cfg = _.cloneDeep(cfg);
@@ -33,10 +35,10 @@ describe('wmd', function() {
     it('should load simple', function() {
         var mod = wmd.get('simple');
         var file = Path.resolve(stubs.brickConfig.root, 'simple/index.css');
-        mod.should.have.property('html') &&
-            mod.should.have.property('url') &&
-            mod.should.have.property('render') &&
-            mod.should.have.property('id');
+        mod.should.have.property('html');
+        mod.should.have.property('url');
+        mod.should.have.property('render');
+        mod.should.have.property('id');
     });
     it('should throw when rendering null template', function() {
         var mod = wmd.get('fs');
@@ -46,19 +48,37 @@ describe('wmd', function() {
         var mod = wmd.get('incom-plete');
         return mod.context(stubs.req).should.be.fullfilled;
     });
+    it('ctrl should call render', function(){
+        var mod = wmd.get('sample-module');
+        var spy = sinon.spy(mod, 'render'); 
+        var f = Path.resolve(__dirname, '../cases/sample-module/htmls/my-html.hbs');
+        var ctx = {foo: 'bar'};
+        return mod.ctrl(stubs.req, ctx).then(function(){
+            var args = spy.args[0];
+            args[0].should.equal(f);
+            args[1].should.deep.equal(ctx);
+            args[2].should.be.a('function');
+            args[3].should.equal('sample-module');
+        });
+    });
+    it('ctrl should be called recursively', function(){
+        var mod = wmd.get('sample-module');
+        var res = '<stub>simple-stub\n</stub>';
+        return mod.ctrl(stubs.req, stubs.ctx).should.eventually.equal(res);
+    });
     it('should handle done(undefined)', function() {
         var mod = wmd.get('sample-module');
         return mod.context(stubs.req, stubs.ctx)
             .should.eventually.deep.equal(stubs.ctx);
     });
-    it('should inherit parent context', function() {
+    it('context should inherit parent context', function() {
         var mod = wmd.get('simple');
         var result = _.cloneDeep(stubs.ctx);
         result.title = 'am title';
         return mod.context(stubs.req, stubs.ctx)
             .should.eventually.deep.equal(result);
     });
-    it('should inherit app.locals', function() {
+    it('context should inherit app.locals', function() {
         var req = {
             app: {
                 locals: {

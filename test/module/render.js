@@ -41,6 +41,11 @@ describe('render', function() {
         var res = '<!DOCTYPE\n html> \t\n<div class="brk-nav-bar"></div>';
         Render.modularize('nav-bar', src).should.equal(res);
     });
+    it('should modularize text', function() {
+        var src = 'text';
+        var res = "<div class='brk-nav-bar'>text</div>";
+        Render.modularize('nav-bar', src).should.equal(res);
+    });
     it('modularize should respect existing attributes', function() {
         var src = '<span id="foo"></span>';
         var res = '<span class="brk-nav-bar" id="foo"></span>';

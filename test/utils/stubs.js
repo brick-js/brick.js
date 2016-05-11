@@ -16,9 +16,8 @@ exports.expressResponse = {
 
 exports.hbs = {
     render: function(path, ctx, pmodularize, pctrl) {
-        var result = '<div>hbs engine stub</div>';
-        result = pmodularize(result);
-        return pctrl('simple', ctx).then(html => result);
+        return pctrl('simple', ctx)
+            .then(html => '<stub>' + html + '</stub>');
     }
 };
 
