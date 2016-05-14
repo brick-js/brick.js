@@ -34,7 +34,7 @@ parser.server = function(pkg, path){
 };
 
 function normalize(id){
-    var res = id.toLowerCase().replace(/[^a-z]+/g, '-');
+    var res = id.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
     if(id !== res){
         debug(`brick "${id}" better be hyphen-separated and lowercased`);
     }

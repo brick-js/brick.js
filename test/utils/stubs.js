@@ -47,3 +47,4 @@ exports.ctx = {
     arr: [1, 'ff']
 };
 
+exports.root = path.resolve(__dirname, '../cases');

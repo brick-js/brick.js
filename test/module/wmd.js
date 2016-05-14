@@ -1,7 +1,7 @@
 const env = require('../utils/env');
 const Render = require('../../module/render.js');
 const should = env.should;
-const assert = require('assert');
+const fs = require('fs');
 const Path = require('path');
 const sinon = require('sinon');
 const stubs = require('../utils/stubs');
@@ -25,7 +25,8 @@ describe('wmd', function() {
         mod.html.should.contain('index.html');
     });
     it('should load all mods', function() {
-        return mods.length.should.equal(4);
+        var n = fs.readdirSync(stubs.root).length;
+        return mods.length.should.equal(n);
     });
     it('should load empty', function() {
         var mod = wmd.get('fs');
@@ -65,60 +66,5 @@ describe('wmd', function() {
         var mod = wmd.get('sample-module');
         var res = '<stub>simple-stub\n</stub>';
         return mod.ctrl(stubs.req, stubs.ctx).should.eventually.equal(res);
-    });
-    it('should handle done(undefined)', function() {
-        var mod = wmd.get('sample-module');
-        return mod.context(stubs.req, stubs.ctx)
-            .should.eventually.deep.equal(stubs.ctx);
-    });
-    it('context should inherit parent context', function() {
-        var mod = wmd.get('simple');
-        var result = _.cloneDeep(stubs.ctx);
-        result.title = 'am title';
-        return mod.context(stubs.req, stubs.ctx)
-            .should.eventually.deep.equal(result);
-    });
-    it('context should inherit app.locals', function() {
-        var req = {
-            app: {
-                locals: {
-                    content: 'am content'
-                }
-            }
-        };
-        var result = {
-            title: 'am title',
-            content: 'am content'
-        };
-        return wmd.get('simple').context(req, {})
-            .should.eventually.deep.equal(result);
-    });
-    it('parent context should override app.locals', function() {
-        var req = {
-            app: {
-                locals: {
-                    content: 'am content'
-                }
-            }
-        };
-        var parent = {
-            content: 'am parent'
-        };
-        var result = {
-            title: 'am title',
-            content: 'am parent'
-        };
-        return wmd.get('simple').context(req, parent)
-            .should.eventually.deep.equal(result);
-    });
-    it('view controller should override parent context', function() {
-        var parent = {
-            title: 'am parent'
-        };
-        var result = {
-            title: 'am title'
-        };
-        return wmd.get('simple').context(stubs.req, parent)
-            .should.eventually.deep.equal(result);
     });
 });

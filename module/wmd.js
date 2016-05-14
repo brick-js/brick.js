@@ -1,6 +1,5 @@
 const fs = require('../io/fs');
 const Path = require('path');
-const changeCase = require('change-case');
 const _ = require('lodash');
 const debug = require('debug')('brick:module:wmd');
 const BPromise = require('bluebird');
@@ -8,6 +7,7 @@ const assert = require('assert');
 
 var Render = require('./render');
 var parser = require('./parser');
+var httpStatusMsg = require('../io/http-status.json');
 
 var cache = {};
 var module = {
@@ -64,16 +64,24 @@ function loadModule(path, config) {
         mod.url = svr.url;
     }
     if (typeof svr.view === 'function') {
-        mod.resolver = (req, ctx) => new BPromise(svr.view.bind({
-            context: ctx
-        }, req));
+        mod.resolver = (req, ctx) => new BPromise((resolve, reject) => {
+            svr.view.call(ctx, req, resolve, (status, msg) => {
+                if(status instanceof Error) return reject(status);
+
+                status = status || 500;
+                msg = msg || httpStatusMsg[status] || 'Unkown Error'; 
+                var err = new Error(msg);
+                err.status = status;
+                return reject(err);
+            });
+        });
     }
 
     debug(`${path} loaded as ${mod.id}`);
     return cache[mod.id] = mod;
 }
 
-exports.get = mid => cache[changeCase.paramCase(mid)];
+exports.get = mid => cache[mid];
 exports.loadModule = loadModule;
 exports.loadAll = function(config) {
     var root = config.root;
