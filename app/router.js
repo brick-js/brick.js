@@ -47,7 +47,7 @@ Router.prototype.mountErrorHandlers = function(){
 
         mod.ctrl(req, {
                 error: err
-            })
+            }, res)
             .then(html => http.html(res, html, err.status || 500))
             .catch(next);
     });

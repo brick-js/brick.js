@@ -12,7 +12,7 @@ var httpStatusMsg = require('../io/http-status.json');
 var cache = {};
 var module = {
     // @return: Promise<HTML>
-    ctrl: function(req, parentCtx) {
+    ctrl: function(req, parentCtx, res) {
         var htmlPath = this.html;
         if (!htmlPath) {
             var e = new Error(`template file for ${this.id} not found`);
@@ -26,15 +26,15 @@ var module = {
             assert(mod, `module ${mid} not found`);
             return mod.ctrl(req, ctx);
         }
-        return this.context(req, parentCtx)
+        return this.context(req, parentCtx, res)
             .then(ctx => this.render(htmlPath, ctx, pctrl, this.id));
     },
     // @return: Promise<ctx>
-    context: function(req, parentCtx) {
-        return this.resolver(req, parentCtx)
+    context: function(req, parentCtx, res) {
+        return this.resolver(req, parentCtx, res)
             .then(ctx => _.defaults(ctx || {}, parentCtx, req.app.locals));
     },
-    resolver: (req, ctx) => BPromise.resolve(ctx)
+    resolver: (req, ctx, res) => BPromise.resolve(ctx)
 };
 
 function loadModule(path, config) {
@@ -64,7 +64,7 @@ function loadModule(path, config) {
         mod.url = svr.url;
     }
     if (typeof svr.view === 'function') {
-        mod.resolver = (req, ctx) => new BPromise((resolve, reject) => {
+        mod.resolver = (req, ctx, res) => new BPromise((resolve, reject) => {
             svr.view.call(ctx, req, resolve, (status, msg) => {
                 if(status instanceof Error) return reject(status);
 
@@ -73,7 +73,7 @@ function loadModule(path, config) {
                 var err = new Error(msg);
                 err.status = status;
                 return reject(err);
-            });
+            }, res);
         });
     }
 
