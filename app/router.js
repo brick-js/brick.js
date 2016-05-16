@@ -44,14 +44,15 @@ Router.prototype.mountErrorHandlers = function() {
 
     // customized error page
     this.expressRouter.use(function(err, req, res, next) {
-        debug('user defined error page');
+        debug('finding customized error page');
         var mod = Module.get('error');
         if (!mod) return next(err); // apply default error handler
 
+        debug('rendering customized error page');
         mod.render(req, res, {
                 error: err
             })
-            .then(html => http.html(res, html, err.status || 500))
+            .then(html => http.html(res, html))
             .catch(next);
     });
 
