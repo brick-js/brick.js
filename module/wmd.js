@@ -4,90 +4,71 @@ const _ = require('lodash');
 const debug = require('debug')('brick:module:wmd');
 const BPromise = require('bluebird');
 const assert = require('assert');
-
 var Render = require('./render');
 var parser = require('./parser');
-var httpStatusMsg = require('../io/http-status.json');
 
 var cache = {};
+
 var module = {
     // @return: Promise<HTML>
-    ctrl: function(req, parentCtx, res) {
-        var htmlPath = this.html;
-        if (!htmlPath) {
-            var e = new Error(`template file for ${this.id} not found`);
-            e.code = 'ENOENT';
-            e.status = 404;
-            throw (e);
-        }
+    render: function(req, res, ctx, method) {
+        debug(`rendering ${this.id}`);
 
-        function pctrl(mid, ctx) {
-            var mod = exports.get(mid);
-            assert(mod, `module ${mid} not found`);
-            return mod.ctrl(req, ctx);
-        }
-        return this.context(req, parentCtx, res)
-            .then(ctx => this.render(htmlPath, ctx, pctrl, this.id));
+        var renderById = _.partialRight(doRenderById, req, res);
+        return this.context(req, res, ctx, method)
+            .then(ctx => {
+                if (!this.template) {
+                    var e = new Error(`template file for ${this.id} not found`);
+                    e.code = 'ENOENT';
+                    e.status = 404;
+                    throw (e);
+                }
+                return this.renderer(this.template, ctx, renderById, this.id);
+            });
     },
+
     // @return: Promise<ctx>
-    context: function(req, parentCtx, res) {
-        return this.resolver(req, parentCtx, res)
+    context: function(req, res, parentCtx, method) {
+        var router = this.router[method || 'get'];
+        return router(req, res, parentCtx)
             .then(ctx => _.defaults(ctx || {}, parentCtx, req.app.locals));
-    },
-    resolver: (req, ctx, res) => BPromise.resolve(ctx)
+    }
 };
 
+function doRenderById(mid, ctx, req, res) {
+    var mod = exports.get(mid);
+    assert(mod, `module ${mid} not found`);
+
+    return mod.render(req, res, ctx);
+}
+
 function loadModule(path, config) {
-    debug('loading module with config:', config);
+    debug(`loading ${path}`);
 
     var mod = Object.create(module);
-    var pkg = parser.package(path, config);
+    var pkg = parser.parsePackageFile(Path.resolve(path, 'package.json'));
+    pkg = _.extend({}, config, pkg);
 
-    _.extend(mod, {
-        _pkg: pkg,
-        path,
-        id: pkg.name
-    });
+    mod.id = pkg.name || parser.normalize(Path.basename(path));
+    mod.path = path;
+    mod.template = parser.parseTemplate(path, pkg);
+    mod.router = parser.parseRouter(Path.resolve(path, pkg.router));
+    mod.renderer = Render.get(Path.extname(mod.template));
 
-    var views = pkg.view instanceof Array ? pkg.view : [pkg.view];
-    for (var i = 0; i < views.length; i++) {
-        var html = Path.resolve(path, views[i]);
-        if (fs.existSync(html)) {
-            mod.html = html;
-            mod.render = Render.get(Path.extname(html));
-            break;
-        }
-    }
-
-    var svr = parser.server(pkg, path) || {};
-    if (svr.url) {
-        mod.url = svr.url;
-    }
-    if (typeof svr.view === 'function') {
-        mod.resolver = (req, ctx, res) => new BPromise((resolve, reject) => {
-            svr.view.call(ctx, req, resolve, (status, msg) => {
-                if(status instanceof Error) return reject(status);
-
-                status = status || 500;
-                msg = msg || httpStatusMsg[status] || 'Unkown Error'; 
-                var err = new Error(msg);
-                err.status = status;
-                return reject(err);
-            }, res);
-        });
-    }
-
-    debug(`${path} loaded as ${mod.id}`);
     return cache[mod.id] = mod;
 }
 
 exports.get = mid => cache[mid];
-exports.loadModule = loadModule;
+
 exports.loadAll = function(config) {
+    assert(config.view, 'config.view lost');
+    assert(config.router, 'config.router lost');
+    assert(config.root, 'config.root lost');
+
     var root = config.root;
-    var defaultPackage = _.pick(config, 'view', 'server');
-    var modules = fs.subdirsSync(root)
+    var cfg = _.pick(config, 'view', 'router');
+
+    return fs.subdirsSync(root)
         .map(dir => Path.resolve(root, dir))
-        .map(path => loadModule(path, defaultPackage));
-    return modules;
+        .map(path => loadModule(path, cfg));
 };

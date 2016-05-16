@@ -6,7 +6,7 @@ const debug = require('debug')('brick:config');
 var config = {
     root: path.resolve(process.cwd(), 'bricks'),
     view: 'view.html',
-    server: 'server.js',
+    router: 'router.js',
     set: function(k, v) {
         this[k] = v;
         return this;

@@ -27,7 +27,7 @@ describe('http', function() {
     });
     it('ok', function() {
         http.ok(res, 'application/json', 'xxx');
-        assert(status.calledWith(200));
+        assert(status.calledWith(200) || status.notCalled);
         assert(set.calledWith('Content-Type', 'application/json'));
         assert(end.calledWith('xxx'));
     });

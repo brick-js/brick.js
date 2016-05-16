@@ -2,5 +2,5 @@
   "name": "sample-module",
   "version": "1.0.0",
   "view": "htmls/my-html.hbs",
-  "server": "svr.js"
+  "router": "svr.js"
 }

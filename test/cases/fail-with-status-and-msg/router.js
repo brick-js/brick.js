@@ -1,4 +1,3 @@
-exports.url = '/';
 exports.get = function(req, done, fail){
-    done();
+    fail(404, 'File Not Exist');
 };

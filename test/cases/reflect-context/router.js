@@ -1,4 +1,3 @@
-exports.url = '/';
 exports.get = function(req, done, fail){
-    done();
+    done(this);
 };

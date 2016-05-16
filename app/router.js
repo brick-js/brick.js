@@ -10,29 +10,32 @@ function Router(config) {
     this.expressRouter = express.Router();
 }
 
-Router.prototype.get = function(){
+Router.prototype.get = function() {
     return this.expressRouter;
 };
 
-Router.prototype.mountModules = function(modules){
-    var count = 0;
-    _.forOwn(modules, mod => {
-        if(this.mountModule(mod)) count++;
-    });
-    debug(`${count}/${modules.length} modules mounted`);
+Router.prototype.mountModules = function(modules) {
+    modules.map(mod => this.mountModule(mod));
 };
 
-Router.prototype.mountModule = function(mod){
-    if (!mod.url) return false;
-    debug(`mounting ${mod.id} at ${mod.url}`);
+Router.prototype.mountModule = function(mod) {
+    var router = mod.router;
+    if (router.get) this.register(mod, 'get');
+    if (router.put) this.register(mod, 'put');
+    if (router.post) this.register(mod, 'post');
+    if (router.delete) this.register(mod, 'delete');
+};
 
-    this.expressRouter.get(mod.url, (req, res, next) => mod.ctrl(req)
+Router.prototype.register = function(mod, method) {
+    debug(`mounting ${mod.id} at ${method.toUpperCase()} ${mod.router.url}`);
+
+    router = this.expressRouter[method].bind(this.expressRouter);
+    router(mod.router.url, (req, res, next) => mod.render(req, res, {}, method)
         .then(html => http.html(res, html))
         .catch(next));
-    return true;
 };
 
-Router.prototype.mountErrorHandlers = function(){
+Router.prototype.mountErrorHandlers = function() {
     this.expressRouter.use(function(req, res, next) {
         var err = new Error('Not Found');
         err.status = 404;
@@ -45,9 +48,9 @@ Router.prototype.mountErrorHandlers = function(){
         var mod = Module.get('error');
         if (!mod) return next(err); // apply default error handler
 
-        mod.ctrl(req, {
+        mod.render(req, res, {
                 error: err
-            }, res)
+            })
             .then(html => http.html(res, html, err.status || 500))
             .catch(next);
     });
@@ -61,4 +64,3 @@ Router.prototype.mountErrorHandlers = function(){
 };
 
 module.exports = config => new Router(config);
-

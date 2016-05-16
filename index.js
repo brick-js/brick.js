@@ -16,7 +16,7 @@ function factory(cfg){
     var modules = Module.loadAll(cfg);
     var router = Router(cfg);
 
-    router.mountModules(modules);
+    router.mountModules(modules.filter(mod => mod.router.url));
     router.mountErrorHandlers();
 
     var brk = Object.create(brick);

@@ -17,7 +17,7 @@ describe('wmd-context', function() {
         var mod = wmd.get('simple');
         var result = _.cloneDeep(stubs.ctx);
         result.title = 'am title';
-        return mod.context(stubs.req, stubs.ctx)
+        return mod.context(stubs.req, stubs.res, stubs.ctx)
             .should.eventually.deep.equal(result);
     });
     it('context should inherit app.locals', function() {
@@ -32,7 +32,7 @@ describe('wmd-context', function() {
             title: 'am title',
             content: 'am content'
         };
-        return wmd.get('simple').context(req, {})
+        return wmd.get('simple').context(req, stubs.res, {})
             .should.eventually.deep.equal(result);
     });
     it('parent context should override app.locals', function() {
@@ -50,7 +50,7 @@ describe('wmd-context', function() {
             title: 'am title',
             content: 'am parent'
         };
-        return wmd.get('simple').context(req, parent)
+        return wmd.get('simple').context(req, stubs.res, parent)
             .should.eventually.deep.equal(result);
     });
     it('view controller should override parent context', function() {
@@ -60,7 +60,7 @@ describe('wmd-context', function() {
         var result = {
             title: 'am title'
         };
-        return wmd.get('simple').context(stubs.req, parent)
+        return wmd.get('simple').context(stubs.req, stubs.res, parent)
             .should.eventually.deep.equal(result);
     });
 });

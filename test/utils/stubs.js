@@ -5,7 +5,7 @@ const _ = require('lodash');
 exports.brickConfig = {
     root: path.resolve(__dirname, '../cases'),
     view: 'view.html',
-    server: 'server.js'
+    router: 'router.js'
 };
 
 exports.expressResponse = {
@@ -39,6 +39,11 @@ exports.req = {
     app: {
         locals: {}
     }
+};
+
+exports.res = {
+    render: function(){},
+    end: function(){}
 };
 
 exports.ctx = {
