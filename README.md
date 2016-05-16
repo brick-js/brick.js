@@ -30,7 +30,7 @@ var Liquid = require('brick-liquid');
 var brk = brickJs({
     root: path.join(__dirname, 'bricks'),
     view: 'view.html',
-    server: 'server.js'
+    router: 'router.js'
 });
 brk.engine('.html', new Liquid());
 
@@ -60,14 +60,14 @@ Optional. Template file entry(s) of your *brick*.
 Can be Array of Strings, eg: `['index.hbs', 'view.html']`.
 Brick.JS will look for corresponding template engine when rendering.
 
-### server
+### router
 
 Type: `String`
 
-Default: `'server.js'`
+Default: `'router.js'`
 
-Optional. Server-side JavaScript, which `exports` a ExpressJS compliant `url`,
-and a `view` which accepts 3 arguments: `(req, done, fail)`.
+Optional. Server-side Router, which `exports` a ExpressJS compliant `url`,
+and REST Routers including `get`, `post`, `put`, `delete` which accepts 4 arguments: `(req, done, fail, res)`.
 
 ## Template Engines
 
