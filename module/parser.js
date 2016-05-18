@@ -12,10 +12,12 @@ function defaultRouterGet(req, done, fail) {
 
 function parseTemplate(path, config) {
     var views = config.view instanceof Array ? config.view : [config.view];
+    assert(views.length, 'view entry config not found');
     for (var i = 0; i < views.length; i++) {
         var template = Path.resolve(path, views[i]);
         if (fs.existSync(template)) return template;
     }
+    return views[0];
 }
 
 function parsePackageFile(path) {

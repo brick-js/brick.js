@@ -42,7 +42,7 @@ describe('wmd', function() {
     });
     it('should load empty', function() {
         var mod = wmd.get('fs');
-        should.not.exist(mod.template);
+        should.exist(mod.template);
         should.not.exist(mod.router.url);
     });
     it('should load simple', function() {
