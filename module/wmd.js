@@ -4,8 +4,8 @@ const _ = require('lodash');
 const debug = require('debug')('brick:module:wmd');
 const BPromise = require('bluebird');
 const assert = require('assert');
-var Render = require('./render');
-var parser = require('./parser');
+const Render = require('./render');
+const parser = require('./parser');
 
 var cache = {};
 
@@ -17,12 +17,6 @@ var module = {
         var renderById = _.partialRight(doRenderById, req, res);
         return this.context(req, res, ctx, method)
             .then(ctx => {
-                if (!this.template) {
-                    var e = new Error(`template file for ${this.id} not found`);
-                    e.code = 'ENOENT';
-                    e.status = 404;
-                    throw (e);
-                }
                 return this.renderer(this.template, ctx, renderById, this.id);
             });
     },
@@ -59,6 +53,8 @@ function loadModule(path, config) {
 }
 
 exports.get = mid => cache[mid];
+
+exports.clear = x => cache = {};
 
 exports.loadAll = function(config) {
     assert(config.view, 'config.view lost');

@@ -6,7 +6,7 @@ const render = require('../../module/render');
 const config = require('../../config.js');
 const _ = require('lodash');
 
-describe('wmd-context', function() {
+describe('context', function() {
     var cfg, mods;
     before(function() {
         cfg = config.factory(stubs.brickConfig);

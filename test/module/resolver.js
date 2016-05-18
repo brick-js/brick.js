@@ -7,7 +7,7 @@ const render = require('../../module/render');
 const config = require('../../config.js');
 const _ = require('lodash');
 
-describe('wmd-resolver', function() {
+describe('resolver', function() {
     var cfg, mods;
     before(function() {
         cfg = config.factory(stubs.brickConfig);
