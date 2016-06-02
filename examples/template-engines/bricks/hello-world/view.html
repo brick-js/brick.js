@@ -1,0 +1,20 @@
+<html>
+<body>
+  <h1>{{title}}</h1>
+  {% for user in users %}
+
+    <h2>{{user.name}}</h2>   
+    <p>{{user.birthday | date: '%Y-%m-%d'}}</p>
+    <p>{{user.gender | gender}}</p>
+  
+    <p>
+    {% if user.gender == 1 %}
+      Male
+    {% else %}
+      Female
+    {% endif %}
+    </p>
+
+  {% endfor %}
+</body>
+</html>
