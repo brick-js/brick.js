@@ -1,9 +1,9 @@
-{%extend 'default-layout'%}
+{%layout 'default-layout'%}
 
 <div class="container"> 
 
   <h2> {{title}} </h2>
 
-  {% include "user" foo=title %}
+  {% include "user" foo:title %}
 
 </div>

@@ -1,6 +1,6 @@
 {
   "name": "brick.js",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "A HMVC style web-dev framework for Node.js",
   "main": "index.js",
   "scripts": {

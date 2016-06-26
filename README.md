@@ -32,7 +32,7 @@ var brk = brickJs({
     view: 'view.html',
     router: 'router.js'
 });
-brk.engine('.html', new Liquid());
+brk.engine('.html', Liquid());
 
 var app = express();
 app.use('/', brk.express);

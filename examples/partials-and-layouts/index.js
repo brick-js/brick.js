@@ -1,16 +1,15 @@
 var express = require('express');
 var brickJs = require('../..');
-var Liquid = require('brick-liquid');
+//var Liquid = require('brick-liquid');
+var Liquid = require('../../../brick-liquid');
 var path = require('path');
 var morgan = require('morgan');
 
 var brk = brickJs();
-var liquid = new Liquid();
+var liquid = Liquid();
 
-liquid.registerFilters({
-    gender: function(g){
-        return g ? 'Male' : 'Female';
-    } 
+liquid.registerFilter('gender', function(g) {
+    return g ? 'Male' : 'Female';
 });
 
 brk.engine('.html', liquid);
