@@ -4,7 +4,7 @@ var Liquid = require('brick-liquid');
 var path = require('path');
 
 var brk = brickJs();
-brk.engine('.html', new Liquid());
+brk.engine('.html', Liquid());
 
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')));

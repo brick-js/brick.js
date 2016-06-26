@@ -3,7 +3,7 @@ var brickJs = require('../..');
 var Liquid = require('brick-liquid');
 
 var brk = brickJs();
-brk.engine('.html', new Liquid());
+brk.engine('.html', Liquid());
 
 var app = express();
 app.use('/', brk.express);

@@ -1,7 +1,6 @@
 var express = require('express');
 var brickJs = require('../..');
-//var Liquid = require('brick-liquid');
-var Liquid = require('../../../brick-liquid');
+var Liquid = require('brick-liquid');
 var path = require('path');
 var morgan = require('morgan');
 
