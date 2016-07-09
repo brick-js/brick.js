@@ -25,7 +25,7 @@ var module = {
     context: function(req, res, parentCtx, method) {
         var router = this.router[method || 'get'];
         return router(req, res, parentCtx)
-            .then(ctx => _.defaults(ctx || {}, parentCtx, req.app.locals));
+            .then(ctx => _.defaults(ctx || {}, parentCtx, res.locals, req.app.locals));
     }
 };
 

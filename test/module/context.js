@@ -13,14 +13,14 @@ describe('context', function() {
         mods = wmd.loadAll(cfg);
         Render.register('.hbs', stubs.hbs);
     });
-    it('context should inherit parent context', function() {
+    it('should inherit parent context', function() {
         var mod = wmd.get('simple');
         var result = _.cloneDeep(stubs.ctx);
         result.title = 'am title';
         return mod.context(stubs.req, stubs.res, stubs.ctx)
             .should.eventually.deep.equal(result);
     });
-    it('context should inherit app.locals', function() {
+    it('should inherit app.locals', function() {
         var req = {
             app: {
                 locals: {
@@ -35,6 +35,27 @@ describe('context', function() {
         return wmd.get('simple').context(req, stubs.res, {})
             .should.eventually.deep.equal(result);
     });
+    it('should inherit res.locals', function() {
+        var req = {
+            app: {
+                locals: {
+                    content: 'am content'
+                }
+            }
+        };
+        var res = {
+            locals: {
+                content: 'am content from res'
+            }
+        };
+        var result = {
+            title: 'am title',
+            content: 'am content from res'
+        };
+        return wmd.get('simple').context(req, res, {})
+            .should.eventually.deep.equal(result);
+    });
+
     it('parent context should override app.locals', function() {
         var req = {
             app: {

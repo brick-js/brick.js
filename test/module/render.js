@@ -35,7 +35,7 @@ describe('render', function() {
     });
     it('should use default context when no router present', function() {
         var mod = wmd.get('incom-plete');
-        return mod.context(stubs.req).should.be.fullfilled;
+        return mod.context(stubs.req, stubs.res).should.be.fullfilled;
     });
     it('render should call renderer', function() {
         var mod = wmd.get('sample-module');
