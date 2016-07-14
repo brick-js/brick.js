@@ -7,7 +7,9 @@ var http = require('../io/http');
 
 function Router(config) {
     this.config = config;
-    this.expressRouter = express.Router();
+    this.expressRouter = express.Router({
+        mergeParams: true
+    });
 }
 
 Router.prototype.get = function() {
