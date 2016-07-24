@@ -2,11 +2,12 @@ const _ = require('lodash');
 const debug = require('debug')('brick:module:render');
 const assert = require('assert');
 const BPromise = require('bluebird');
-const fs = require('../io/fs.js');
+const fs = require('fs');
+BPromise.promisifyAll(fs);
 
 var engines = {
     '.html': {
-        render: path => fs.read(path)
+        render: path => fs.readFileAsync(path, 'utf8')
     }
 };
 var cache = {};

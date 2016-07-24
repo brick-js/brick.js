@@ -1,9 +1,9 @@
-const env = require('../utils/env');
+const env = require('./utils/env');
 const Path = require('path');
 const sinon = require('sinon');
 const assert = require('assert');
-const res = require('../utils/stubs').expressResponse;
-const http = require('../../io/http');
+const res = require('./utils/stubs').expressResponse;
+const http = require('../src/http');
 
 describe('http', function() {
     var set, status, end;

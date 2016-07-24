@@ -1,13 +1,13 @@
-const env = require('../utils/env');
-const Render = require('../../module/render.js');
+const env = require('./utils/env');
+const Render = require('../src/render.js');
 const should = env.should;
 const fs = require('fs');
 const Path = require('path');
 const sinon = require('sinon');
-const stubs = require('../utils/stubs');
-const wmd = require('../../module/wmd');
-const render = require('../../module/render');
-const config = require('../../config.js');
+const stubs = require('./utils/stubs');
+const wmd = require('../src/module.js');
+const render = require('../src/render');
+const config = require('../config.js');
 const _ = require('lodash');
 
 describe('loader', function() {
@@ -18,7 +18,7 @@ describe('loader', function() {
     });
     it('config:router, config.view should be optional', function() {
         var cfg = {
-            root: Path.resolve(__dirname, '../cases')
+            root: Path.resolve(__dirname, './cases')
         };
         wmd.loadAll(config.factory(cfg));
         wmd.get('incom-plete').template.should.contain('inCom_plete/view.html');
@@ -26,7 +26,7 @@ describe('loader', function() {
     });
     it('config:view should support an array', function() {
         var _cfg = {
-            root: Path.resolve(__dirname, '../cases'),
+            root: Path.resolve(__dirname, './cases'),
             router: 'router.js',
             view: ['view.html', 'index.html']
         };

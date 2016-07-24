@@ -1,10 +1,10 @@
-const env = require('../utils/env');
-const Render = require('../../module/render.js');
+const env = require('./utils/env');
+const Render = require('../src/render.js');
 const Path = require('path');
-const stubs = require('../utils/stubs');
-const wmd = require('../../module/wmd');
-const render = require('../../module/render');
-const config = require('../../config.js');
+const stubs = require('./utils/stubs');
+const wmd = require('../src/module.js');
+const render = require('../src/render');
+const config = require('../config.js');
 const _ = require('lodash');
 
 describe('resolver', function() {

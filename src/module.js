@@ -1,5 +1,5 @@
-const fs = require('../io/fs');
-const Path = require('path');
+const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const debug = require('debug')('brick:module:wmd');
 const BPromise = require('bluebird');
@@ -36,18 +36,18 @@ function doRenderById(mid, ctx, req, res) {
     return mod.render(req, res, ctx);
 }
 
-function loadModule(path, config) {
-    debug(`loading ${path}`);
+function loadModule(mpath, config) {
+    debug(`loading ${mpath}`);
 
     var mod = Object.create(module);
-    var pkg = parser.parsePackageFile(Path.resolve(path, 'package.json'));
+    var pkg = parser.parsePackageFile(path.resolve(mpath, 'package.json'));
     pkg = _.extend({}, config, pkg);
 
-    mod.id = pkg.name || parser.normalize(Path.basename(path));
-    mod.path = path;
-    mod.template = parser.parseTemplate(path, pkg);
-    mod.router = parser.parseRouter(Path.resolve(path, pkg.router));
-    mod.renderer = Render.get(Path.extname(mod.template));
+    mod.id = pkg.name || parser.normalize(path.basename(mpath));
+    mod.path = mpath;
+    mod.template = parser.parseTemplate(mpath, pkg);
+    mod.router = parser.parseRouter(path.resolve(mpath, pkg.router));
+    mod.renderer = Render.get(path.extname(mod.template));
 
     return cache[mod.id] = mod;
 }
@@ -64,7 +64,13 @@ exports.loadAll = function(config) {
     var root = config.root;
     var cfg = _.pick(config, 'view', 'router');
 
-    return fs.subdirsSync(root)
-        .map(dir => Path.resolve(root, dir))
+
+    return fs
+        .readdirSync(root)
+        .filter(fileName => {
+            var filepath = path.resolve(root, fileName);
+            return fs.statSync(filepath).isDirectory();
+        })
+        .map(dir => path.resolve(root, dir))
         .map(path => loadModule(path, cfg));
 };

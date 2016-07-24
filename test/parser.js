@@ -1,11 +1,10 @@
-const env = require('../utils/env');
+const env = require('./utils/env');
+const stubs = require('./utils/stubs');
 const should = env.should;
-const fs = require('fs');
 const Path = require('path');
-const stubs = require('../utils/stubs');
-const config = require('../../config.js');
+const config = require('../config.js');
 const _ = require('lodash');
-const parser = require('../../module/parser.js');
+const parser = require('../src/parser.js');
 
 describe('parser', function() {
     var cfg, path;
