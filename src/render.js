@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const debug = require('debug')('brick:module:render');
+const debug = require('debug')('brick:render');
 const assert = require('assert');
 const BPromise = require('bluebird');
 const fs = require('fs');

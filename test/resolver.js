@@ -31,20 +31,4 @@ describe('resolver', function() {
         return p.should.be.rejectedWith(Error, 'Not Found') &&
             p.catch(e => e.status.should.equal(404));
     });
-    it('should handle fail(err)', function() {
-        var mod = wmd.get('fail-with-err');
-        return mod.context(stubs.req, stubs.res, {})
-            .should.be.rejectedWith(Error, 'am err');
-    });
-    it('should handle fail(invalid)', function() {
-        var mod = wmd.get('fail-with-invalid');
-        return mod.context(stubs.req, stubs.res, {})
-            .should.be.rejectedWith(Error, 'Unkown Error');
-    });
-    it('should handle fail(404, msg)', function() {
-        var mod = wmd.get('fail-with-status-and-msg');
-        var p  = mod.context(stubs.req, stubs.res, {});
-        return p.should.be.rejectedWith(Error, 'File Not Exist') &&
-            p.catch(e => e.status.should.equal(404));
-    });
 });

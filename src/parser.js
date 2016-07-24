@@ -35,7 +35,7 @@ function parseRouter(path) {
     } catch (e) {}
 
     router.url = file.url;
-    router.get = parseController(file.get || ((req, done, fail) => done()));
+    router.get = parseController(file.get || ((req, res) => res.render()));
     router.put = parseController(file.put);
     router.post = parseController(file.post);
     router.delete = parseController(file.delete);
@@ -46,21 +46,9 @@ function parseRouter(path) {
 function parseController(ctrl) {
     if(!ctrl) return undefined;
     return (req, res, ctx) => new BPromise((resolve, reject) => {
-        var done = resolve;
-        var fail = _.partial(doFail, reject);
-        return ctrl.call(ctx, req, done, fail, res);
+        res.render = resolve;
+        return ctrl.call(ctx, req, res, reject);
     });
-}
-
-function doFail(cb, status, msg) {
-    if (status instanceof Error) return cb(status);
-
-    status = status || 500;
-    msg = msg || httpStatusMsg[status] || 'Unkown Error';
-
-    var err = new Error(msg);
-    err.status = status;
-    cb(err);
 }
 
 function normalize(id) {
@@ -72,5 +60,5 @@ function normalize(id) {
 }
 
 module.exports = {
-    normalize, doFail, parseController, parseTemplate, parsePackageFile, parseRouter
+    normalize, parseController, parseTemplate, parsePackageFile, parseRouter
 };

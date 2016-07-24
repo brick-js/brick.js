@@ -1,3 +1,3 @@
-exports.get = function(req, done, fail){
-    done(this);
+exports.get = function(req, res, next){
+    res.render(this);
 };
