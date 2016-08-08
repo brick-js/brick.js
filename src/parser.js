@@ -9,7 +9,6 @@ const BPromise = require('bluebird');
 function parseTemplate(path, pkg) {
     debug(`parseTemplate:${path}, ${pkg.view}`);
     var views = pkg.view instanceof Array ? pkg.view : [pkg.view];
-    assert(views.length, 'view entry for pkg not found');
     for (var i = 0; i < views.length; i++) {
         var template = Path.resolve(path, views[i]);
         try {
@@ -47,8 +46,12 @@ function parseRouter(path) {
 function parseController(ctrl) {
     if(!ctrl) return undefined;
     return (req, res, ctx) => new BPromise((resolve, reject) => {
-        res.render = resolve;
-        return ctrl.call(ctx, req, res, reject);
+        res.locals = ctx;
+        res.render = function(c){
+            c = _.assign({}, res.locals, c);
+            resolve(c);
+        }
+        return ctrl(req, res, reject);
     });
 }
 

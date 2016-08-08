@@ -17,3 +17,4 @@ describe('config', function() {
         expect(config.factory().set('bar', 'foo').get('bar')).to.equal('foo');
     });
 });
+

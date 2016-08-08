@@ -22,13 +22,13 @@ Router.prototype.mountModules = function(modules) {
 
 Router.prototype.mountModule = function(mod) {
     var router = mod.router;
-    if (router.get) this.register(mod, 'get');
-    if (router.put) this.register(mod, 'put');
-    if (router.post) this.register(mod, 'post');
-    if (router.delete) this.register(mod, 'delete');
+    if (router.get) this.doMountModule(mod, 'get');
+    if (router.put) this.doMountModule(mod, 'put');
+    if (router.post) this.doMountModule(mod, 'post');
+    if (router.delete) this.doMountModule(mod, 'delete');
 };
 
-Router.prototype.register = function(mod, method) {
+Router.prototype.doMountModule = function(mod, method) {
     debug(`mounting ${mod.id} at ${method.toUpperCase()} ${mod.router.url}`);
 
     router = this.expressRouter[method].bind(this.expressRouter);

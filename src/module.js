@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const debug = require('debug')('brick:module:wmd');
+const debug = require('debug')('brick:module');
 const BPromise = require('bluebird');
 const assert = require('assert');
 const Render = require('./render');
@@ -24,8 +24,14 @@ var module = {
     // @return: Promise<ctx>
     context: function(req, res, parentCtx, method) {
         var router = this.router[method || 'get'];
+
+        parentCtx = _.assign({}, parentCtx, res.locals)
         return router(req, res, parentCtx)
-            .then(ctx => _.defaults(ctx || {}, parentCtx, res.locals, req.app.locals));
+            .then(ctx => {
+                debug(ctx, parentCtx, req.app.locals);
+                ctx = _.assign({}, req.app.locals, parentCtx, ctx);
+                return ctx;
+            });
     }
 };
 

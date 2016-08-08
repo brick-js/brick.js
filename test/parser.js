@@ -20,9 +20,20 @@ describe('parser', function() {
             url: '/foo',
             get: function() {}
         });
+        mockFs({
+            '/foo/index.html': '',
+            '/bar/view.html': ''
+        });
     });
     afterEach(function() {
         mockRequire.stopAll();
+    });
+    it('should resolve array of views', function() {
+        var pkg = {
+            view: ['view.html', 'index.html']
+        };
+        expect(parser.parseTemplate('/foo', pkg)).to.contain('index.html');
+        expect(parser.parseTemplate('/bar', pkg)).to.contain('view.html');
     });
     it('should parse package.json', function() {
         var pkg = parser.parsePackageFile('/package.json');
