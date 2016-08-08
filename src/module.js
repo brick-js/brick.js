@@ -36,7 +36,7 @@ function doRenderById(mid, ctx, req, res) {
     return mod.render(req, res, ctx);
 }
 
-function loadModule(mpath, config) {
+exports.loadModule = function(mpath, config) {
     debug(`loading ${mpath}`);
 
     var mod = Object.create(module);
@@ -72,5 +72,5 @@ exports.loadAll = function(config) {
             return fs.statSync(filepath).isDirectory();
         })
         .map(dir => path.resolve(root, dir))
-        .map(path => loadModule(path, cfg));
+        .map(path => exports.loadModule(path, cfg));
 };

@@ -1,4 +1,5 @@
 const env = require('./utils/env');
+const expect = env.expect;
 const Render = require('../src/render.js');
 const stubs = require('./utils/stubs');
 const wmd = require('../src/module');
@@ -17,8 +18,8 @@ describe('context', function() {
         var mod = wmd.get('simple');
         var result = _.cloneDeep(stubs.ctx);
         result.title = 'am title';
-        return mod.context(stubs.req, stubs.res, stubs.ctx)
-            .should.eventually.deep.equal(result);
+        return expect(mod.context(stubs.req, stubs.res, stubs.ctx))
+            .to.eventually.deep.equal(result);
     });
     it('should inherit app.locals', function() {
         var req = {
@@ -32,8 +33,8 @@ describe('context', function() {
             title: 'am title',
             content: 'am content'
         };
-        return wmd.get('simple').context(req, stubs.res, {})
-            .should.eventually.deep.equal(result);
+        return expect(wmd.get('simple').context(req, stubs.res, {}))
+            .to.eventually.deep.equal(result);
     });
     it('should inherit res.locals', function() {
         var req = {
@@ -52,8 +53,8 @@ describe('context', function() {
             title: 'am title',
             content: 'am content from res'
         };
-        return wmd.get('simple').context(req, res, {})
-            .should.eventually.deep.equal(result);
+        return expect(wmd.get('simple').context(req, res, {}))
+            .to.eventually.deep.equal(result);
     });
 
     it('parent context should override app.locals', function() {
@@ -71,8 +72,8 @@ describe('context', function() {
             title: 'am title',
             content: 'am parent'
         };
-        return wmd.get('simple').context(req, stubs.res, parent)
-            .should.eventually.deep.equal(result);
+        return expect(wmd.get('simple').context(req, stubs.res, parent))
+            .to.eventually.deep.equal(result);
     });
     it('view controller should override parent context', function() {
         var parent = {
@@ -81,7 +82,7 @@ describe('context', function() {
         var result = {
             title: 'am title'
         };
-        return wmd.get('simple').context(stubs.req, stubs.res, parent)
-            .should.eventually.deep.equal(result);
+        return expect(wmd.get('simple').context(stubs.req, stubs.res, parent))
+            .to.eventually.deep.equal(result);
     });
 });

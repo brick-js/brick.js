@@ -2,11 +2,12 @@ const Path = require('path');
 const assert = require('assert');
 const fs = require('fs');
 const _ = require('lodash');
-const debug = require('debug')('brick:module:parser');
+const debug = require('debug')('brick:parser');
 const httpStatusMsg = require('./http-status.json');
 const BPromise = require('bluebird');
 
 function parseTemplate(path, pkg) {
+    debug(`parseTemplate:${path}, ${pkg.view}`);
     var views = pkg.view instanceof Array ? pkg.view : [pkg.view];
     assert(views.length, 'view entry for pkg not found');
     for (var i = 0; i < views.length; i++) {
@@ -19,9 +20,9 @@ function parseTemplate(path, pkg) {
     return Path.resolve(path, views[0]);
 }
 
-function parsePackageFile(path) {
+function parsePackageFile(f) {
     try {
-        return require(path);
+        return require(f);
     } catch (e) {
         return {};
     }

@@ -1,6 +1,6 @@
 const env = require('./utils/env');
+const expect = env.expect;
 const Render = require('../src/render.js');
-const should = env.should;
 const fs = require('fs');
 const Path = require('path');
 const sinon = require('sinon');
@@ -21,8 +21,8 @@ describe('loader', function() {
             root: Path.resolve(__dirname, './cases')
         };
         wmd.loadAll(config.factory(cfg));
-        wmd.get('incom-plete').template.should.contain('inCom_plete/view.html');
-        wmd.get('simple').router.url.should.equal('/');
+        expect(wmd.get('incom-plete').template).to.contain('inCom_plete/view.html');
+        expect(wmd.get('simple').router.url).to.equal('/');
     });
     it('config:view should support an array', function() {
         var _cfg = {
@@ -31,27 +31,27 @@ describe('loader', function() {
             view: ['view.html', 'index.html']
         };
         wmd.loadAll(config.factory(_cfg));
-        wmd.get('index-view-name').template.should.contain('index.html');
+        expect(wmd.get('index-view-name').template).to.contain('index.html');
     });
     it('should load all directories as modules', function() {
         var mods = wmd.loadAll(cfg);
         var n = fs.readdirSync(stubs.root).length;
-        return mods.length.should.equal(n);
+        expect(mods.length).to.equal(n);
     });
     it('should load empty module', function() {
         wmd.loadAll(cfg);
         var mod = wmd.get('fs');
-        should.exist(mod.template);
-        should.not.exist(mod.router.url);
+        expect(mod.template).to.exist;
+        expect(mod.router.url).to.not.exist;
     });
     it('should load a simple module', function() {
         wmd.loadAll(cfg);
         var mod = wmd.get('simple');
         var file = Path.resolve(stubs.brickConfig.root, 'simple/index.css');
-        mod.should.have.property('id');
-        mod.should.have.property('template');
-        mod.should.have.property('router');
-        mod.router.should.have.property('url');
-        mod.router.should.have.property('get');
+        expect(mod).to.have.property('id');
+        expect(mod).to.have.property('template');
+        expect(mod).to.have.property('router');
+        expect(mod.router).to.have.property('url');
+        expect(mod.router).to.have.property('get');
     });
 });

@@ -1,4 +1,5 @@
 const env = require('./utils/env');
+const expect = env.expect;
 const Render = require('../src/render.js');
 const Path = require('path');
 const stubs = require('./utils/stubs');
@@ -16,19 +17,19 @@ describe('resolver', function() {
     });
     it('should handle done(undefined)', function() {
         var mod = wmd.get('sample-module');
-        return mod.context(stubs.req, stubs.res, stubs.ctx)
-            .should.eventually.deep.equal(stubs.ctx);
+        return expect(mod.context(stubs.req, stubs.res, stubs.ctx))
+            .to.eventually.deep.equal(stubs.ctx);
     });
     it('should pass context as this', function() {
         var mod = wmd.get('reflect-context');
         var ctx = {};
-        return mod.context(stubs.req, stubs.res, ctx)
-            .should.eventually.equal(ctx);
+        return expect(mod.context(stubs.req, stubs.res, ctx))
+            .to.eventually.equal(ctx);
     });
     it('should handle fail(404)', function() {
         var mod = wmd.get('fail-with-404');
         var p  = mod.context(stubs.req, stubs.res, {});
-        return p.should.be.rejectedWith(Error, 'Not Found') &&
-            p.catch(e => e.status.should.equal(404));
+        expect(p).to.be.rejectedWith(Error, 'Not Found');
+        return p.catch(e => expect(e.status).to.equal(404));
     });
 });

@@ -1,23 +1,46 @@
 const env = require('./utils/env');
 const stubs = require('./utils/stubs');
-const should = env.should;
+const expect = env.expect;
 const Path = require('path');
 const config = require('../config.js');
 const _ = require('lodash');
 const parser = require('../src/parser.js');
+const mockRequire = require('mock-require');
+const mockFs = require('mock-fs');
 
 describe('parser', function() {
-    var cfg, path;
-    before(function() {
-        cfg = config.factory(stubs.brickConfig);
-        path = Path.resolve(stubs.root, 'sample-module/package.json');
+    beforeEach(function() {
+        mockRequire('/package.json', {
+            "name": "sample-module",
+            "version": "1.0.0",
+            "view": "htmls/my-html.hbs",
+            "router": "svr.js"
+        });
+        mockRequire('/router.js', {
+            url: '/foo',
+            get: function() {}
+        });
+    });
+    afterEach(function() {
+        mockRequire.stopAll();
     });
     it('should parse package.json', function() {
-        var pkg = parser.parsePackageFile(path);
-        pkg.name.should.equal("sample-module");
-        pkg.version.should.equal("1.0.0");
-        pkg.view.should.equal('htmls/my-html.hbs');
-        pkg.router.should.equal("svr.js");
+        var pkg = parser.parsePackageFile('/package.json');
+        expect(pkg.name).to.equal("sample-module");
+        expect(pkg.version).to.equal("1.0.0");
+        expect(pkg.view).to.equal('htmls/my-html.hbs');
+        expect(pkg.router).to.equal("svr.js");
+    });
+
+    it('should parse normal router', function() {
+        var router = parser.parseRouter('/router.js');
+        expect(router.url).to.exist;
+        expect(router.get).to.exist;
+    });
+
+    it('should parse empty router', function() {
+        var router = parser.parseRouter('/not-exist-router.js');
+        expect(router.url).to.not.exist;
+        expect(router).to.exist;
     });
 });
-
