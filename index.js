@@ -1,29 +1,28 @@
-var _ = require('lodash');
-var config = require('./config');
-var Router = require('./app/router');
-var Module = require('./module/wmd');
-var Render = require('./module/render');
-var debug = require('debug')('brick:index');
+const _ = require('lodash');
+const config = require('./src/config');
+const Router = require('./src/router');
+const Module = require('./src/module');
+const Render = require('./src/render');
+const debug = require('debug')('brick:index');
 
 var brick = {
     engine: (type, engine) => Render.register(type, engine),
 };
 
-function factory(cfg){
+module.exports = function(cfg) {
     cfg = config.factory(cfg);
     debug('config loaded:', JSON.stringify(cfg, null, 4));
 
-    var modules = Module.loadAll(cfg);
+    var m = Module();
+    var modules = m.loadAll(cfg);
     var router = Router(cfg);
 
     router.mountModules(modules.filter(mod => mod.router.url));
-    router.mountErrorHandlers();
+    router.mountErrorHandlers(m.get('error'));
 
     var brk = Object.create(brick);
     brk.root = cfg.root;
     brk.express = router.get();
 
     return brk;
-}
-
-module.exports = factory;
+};

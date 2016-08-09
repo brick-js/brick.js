@@ -2,16 +2,22 @@ const env = require('./utils/env');
 const expect = env.expect;
 const Render = require('../src/render.js');
 const stubs = require('./utils/stubs');
-const wmd = require('../src/module');
+const Module = require('../src/module');
 const render = require('../src/render');
-const config = require('../config.js');
+const config = require('../src/config.js');
 const _ = require('lodash');
 const mockFs = require('mock-fs');
 const mockRequire = require('mock-require');
 
 describe('context', function() {
-    var cfg, mods;
+    var cfg, mods, req, m;
     before(function() {
+        req = {
+            app: {
+                locals: {}
+            }
+        };
+        m = Module();
         mockFs({
             '/foo/view.html': 'foo',
             '/reflect/router.js': 'this will not be used by require',
@@ -26,7 +32,7 @@ describe('context', function() {
             get: (req, res) => res.render(res.locals)
         });
 
-        mods = wmd.loadAll(config.factory({
+        mods = m.loadAll(config.factory({
             root: '/'
         }));
         Render.register('.hbs', stubs.hbs);
@@ -36,8 +42,8 @@ describe('context', function() {
         mockRequire.stopAll();
     });
     it('should inherit parent context', function() {
-        var mod = wmd.get('simple');
-        return expect(mod.context(stubs.req, {}, {
+        var mod = m.get('simple');
+        return expect(mod.context(req, {}, {
             parent: 'none'
         })).to.eventually.deep.equal({
             parent: 'none',
@@ -56,7 +62,7 @@ describe('context', function() {
             title: 'am title',
             content: 'am content'
         };
-        return expect(wmd.get('simple').context(req, {}, {}))
+        return expect(m.get('simple').context(req, {}, {}))
             .to.eventually.deep.equal(result);
     });
     it('res.locals should override app.locals', function() {
@@ -72,7 +78,7 @@ describe('context', function() {
                 content: 'from res.locals'
             }
         };
-        return expect(wmd.get('simple').context(req, res, {}))
+        return expect(m.get('simple').context(req, res, {}))
             .to.eventually.deep.equal({
                 title: 'am title',
                 content: 'from res.locals'
@@ -94,29 +100,32 @@ describe('context', function() {
             title: 'am title',
             content: 'am parent'
         };
-        return expect(wmd.get('simple').context(req, {}, parent))
+        return expect(m.get('simple').context(req, {}, parent))
             .to.eventually.deep.equal(result);
     });
     it('view controller should override parent context', function() {
         var parent = {
             title: 'from parent'
         };
-        return expect(wmd.get('simple').context(stubs.req, {}, parent))
+        return expect(m.get('simple').context(req, {}, parent))
             .to.eventually.deep.equal({
                 title: 'am title'
             });
     });
     it('should handle done(undefined)', function() {
-        var mod = wmd.get('foo');
-        return expect(mod.context(stubs.req, {}, stubs.ctx))
-            .to.eventually.deep.equal(stubs.ctx);
-    });
-    it('should pass context as this', function() {
-        var mod = wmd.get('reflect');
+        var mod = m.get('foo');
         var ctx = {
             foo: 'bar'
         };
-        return expect(mod.context(stubs.req, {}, ctx))
+        return expect(mod.context(req, {}, ctx))
+            .to.eventually.deep.equal(ctx);
+    });
+    it('should pass context as this', function() {
+        var mod = m.get('reflect');
+        var ctx = {
+            foo: 'bar'
+        };
+        return expect(mod.context(req, {}, ctx))
             .to.eventually.deep.equal(ctx);
     });
 });

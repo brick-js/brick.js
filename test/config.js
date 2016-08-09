@@ -1,6 +1,6 @@
 const env = require('./utils/env');
 const expect = env.expect;
-const config = require('../config.js');
+const config = require('../src/config.js');
 
 describe('config', function() {
     it('should have default value', function() {

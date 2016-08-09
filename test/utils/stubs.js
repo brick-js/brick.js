@@ -1,18 +1,7 @@
 const path = require('path');
 const BPromise = require('bluebird');
 const _ = require('lodash');
-
-exports.brickConfig = {
-    root: path.resolve(__dirname, '../cases'),
-    view: 'view.html',
-    router: 'router.js'
-};
-
-exports.expressResponse = {
-    set: function() {},
-    status: function() {},
-    end: function() {}
-};
+const http  = require('http');
 
 exports.hbs = {
     render: function(path, ctx, pmodularize, pctrl) {
@@ -21,35 +10,13 @@ exports.hbs = {
     }
 };
 
-exports.pctrl = function() {
-    return BPromise.resolve('<html>Stub</html>');
-};
+exports.server = function(cfg) {
+    var Brick = require('../..');
+    var express = require('express');
+    var app = express();
 
-exports.stylus = {
-    render: function(path, rootClass) {
-        return BPromise.resolve(path + rootClass);
-    }
+    var brick = Brick(cfg);
+    app.get('/', (req, res) => res.send('Hello World!'));
+    app.use(brick.express);
+    return app.listen(3202);
 };
-
-exports.module = {
-    id: 'mod'
-};
-
-exports.req = {
-    app: {
-        locals: {}
-    }
-};
-
-exports.res = {
-    render: function(){},
-    end: function(){}
-};
-
-exports.ctx = {
-    foo: 'bar',
-    bar: 123,
-    arr: [1, 'ff']
-};
-
-exports.root = path.resolve(__dirname, '../cases');

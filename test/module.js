@@ -1,16 +1,22 @@
 const env = require('./utils/env');
 const expect = env.expect;
 const mock = require('mock-fs');
-const m = require('../src/module.js');
-const config = require('../config.js');
+const Module = require('../src/module.js');
+const config = require('../src/config.js');
 const fs = require('fs');
 const stubs = require('./utils/stubs.js');
 const sinon = require('sinon');
 const mockRequire = require('mock-require');
 
 describe('module', function() {
-    var cfg;
-    before(function(){
+    var cfg, req, m;
+    before(function() {
+        req = {
+            app: {
+                locals: {}
+            }
+        };
+        m = Module();
         mock({
             '/foo/router.js': 'exports.url="/"',
             '/bar/view.html': 'bar',
@@ -20,7 +26,7 @@ describe('module', function() {
         });
         mockRequire('/standard/router.js', {
             url: '',
-            get: function(){}
+            get: function() {}
         });
         cfg = config.factory({
             root: '/'
@@ -40,7 +46,7 @@ describe('module', function() {
     });
     it('should load empty module', function() {
         var mod = m.loadModule('/empty', cfg);
-        expect(mod.template).to.exist;  // static tpl path for better performance
+        expect(mod.template).to.exist; // static tpl path for better performance
         expect(mod.router.url).to.not.exist;
     });
     it('should load all directories as modules', function() {
@@ -54,7 +60,9 @@ describe('module', function() {
     });
     it('should use default context when no router present', function() {
         var mod = m.loadModule('/bar', cfg);
-        return expect(mod.context(stubs.req, stubs.res)).to.be.fullfilled;
+        return expect(mod.context({
+            app: {}
+        }, {})).to.be.fullfilled;
     });
     it('render should call renderer', function() {
         var mod = m.loadModule('/bar', cfg);
@@ -62,7 +70,7 @@ describe('module', function() {
         var ctx = {
             foo: 'bar'
         };
-        return mod.render(stubs.req, stubs.res, ctx).then(function() {
+        return mod.render(req, {}, ctx).then(function() {
             var args = spy.args[0];
             expect(args[0]).to.equal('/bar/view.html');
             expect(args[1]).to.deep.equal(ctx);
@@ -72,7 +80,7 @@ describe('module', function() {
     });
     it('should call render recursively', function() {
         var mod = m.loadModule('/bar', cfg);
-        return expect(mod.render(stubs.req, stubs.res, stubs.ctx))
+        return expect(mod.render(req, {}, {}))
             .to.eventually.equal('bar');
     });
 });

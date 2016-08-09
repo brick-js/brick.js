@@ -4,14 +4,17 @@ const expect = env.expect;
 const Path = require('path');
 const sinon = require('sinon');
 const stubs = require('./utils/stubs');
-const wmd = require('../src/module.js');
+const Module = require('../src/module.js');
 const render = require('../src/render');
-const config = require('../config.js');
+const config = require('../src/config.js');
 const _ = require('lodash');
 const mock = require('mock-fs');
+const BPromise = require('bluebird');
 
 describe('render', function() {
+    var m;
     before(function(){
+        m = Module();
         mock({
             '/foo/sample/router.js': 'exports.url="/";\nexports.get=function(){}',
             '/foo/sample/view.html': 'Hello!'
@@ -21,8 +24,8 @@ describe('render', function() {
         mock.restore();
     });
     beforeEach(function() {
-        wmd.clear();
-        mods = wmd.loadAll(config.factory({
+        m.clear();
+        mods = m.loadAll(config.factory({
             root: '/foo'
         }));
         Render.register('.hbs', stubs.hbs);
@@ -49,7 +52,7 @@ describe('render', function() {
         var ctx = {
             foo: 'bar'
         };
-        var pctrl = sinon.spy(stubs.pctrl);
+        var pctrl = sinon.spy(() => BPromise.resolve('<html>Stub</html>'));
         Render.get('.liquid')('a.liquid', ctx, pctrl, 'a');
         return expect(pctrl.calledWith('simple', ctx)).to.equal(true);
     });

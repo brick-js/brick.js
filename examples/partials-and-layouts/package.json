@@ -11,7 +11,6 @@
   "license": "MIT",
   "dependencies": {
     "brick-liquid": "3.0.1",
-    "brick.js": "^2.2.0",
     "express": "^4.13.4",
     "morgan": "^1.7.0"
   }

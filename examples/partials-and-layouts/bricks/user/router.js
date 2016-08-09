@@ -1,7 +1,7 @@
-exports.get = function(req, done, fail){
-    console.log(this.title);  // Hello World
-    console.log(this.foo);
-    done({
-        greetings: 'Alice: ' + this.foo
+exports.get = function(req, res, next){
+    console.log(res.locals.title);  // Hello World
+    console.log(res.locals.foo);
+    res.render({
+        greetings: 'Alice: ' + res.locals.foo
     });
 };

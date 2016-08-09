@@ -1,7 +1,7 @@
 exports.url = '/';
 
-exports.get = function(req, done, fail){
-    done({
+exports.get = function(req, res){
+    res.render({
         title: 'Hello World',
         users: [{
             name: 'Alice',

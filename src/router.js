@@ -1,9 +1,8 @@
 var express = require('express');
-var Module = require('../module/wmd.js');
-var Render = require('../module/render');
+var Render = require('./render.js');
 var _ = require('lodash');
 var debug = require('debug')('brick:router');
-var http = require('../io/http');
+var http = require('./http');
 
 function Router(config) {
     this.config = config;
@@ -37,7 +36,7 @@ Router.prototype.doMountModule = function(mod, method) {
         .catch(next));
 };
 
-Router.prototype.mountErrorHandlers = function() {
+Router.prototype.mountErrorHandlers = function(errorModule) {
     this.expressRouter.use(function(req, res, next) {
         var err = new Error('Not Found');
         err.status = 404;
@@ -47,11 +46,10 @@ Router.prototype.mountErrorHandlers = function() {
     // customized error page
     this.expressRouter.use(function(err, req, res, next) {
         debug('finding customized error page');
-        var mod = Module.get('error');
-        if (!mod) return next(err); // apply default error handler
+        if (!errorModule) return next(err); // apply default error handler
 
         debug('rendering customized error page');
-        mod.render(req, res, {
+        errorModule.render(req, res, {
                 error: err
             })
             .then(html => http.html(res, html))

@@ -9,7 +9,7 @@
   "author": "Harttle",
   "license": "MIT",
   "dependencies": {
-    "brick.js": "^2.2.0",
+    "brick.js": "^3.0.0",
     "express": "^4.13.4"
   }
 }
