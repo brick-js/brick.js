@@ -8,20 +8,26 @@ const Module = require('../src/module.js');
 const render = require('../src/render');
 const config = require('../src/config.js');
 const _ = require('lodash');
-const mock = require('mock-fs');
+const mockFs = require('mock-fs');
+const mockRequire = require('mock-require');
 const BPromise = require('bluebird');
 
 describe('render', function() {
     var m;
     before(function(){
         m = Module();
-        mock({
+        mockFs({
             '/foo/sample/router.js': 'exports.url="/";\nexports.get=function(){}',
             '/foo/sample/view.html': 'Hello!'
         });
+        mockRequire('/foo/sample/router.js', {
+            url: '/',
+            get: function(){}
+        });
     });
     after(function() {
-        mock.restore();
+        mockFs.restore();
+        mockRequire.stopAll();
     });
     beforeEach(function() {
         m.clear();

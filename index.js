@@ -16,8 +16,11 @@ module.exports = function(cfg) {
     var m = Module();
     var modules = m.loadAll(cfg);
     var router = Router(cfg);
+    var rootModules = modules.filter(mod => mod.router.url);
 
-    router.mountModules(modules.filter(mod => mod.router.url));
+    debug(`found ${modules.length} modules, ${rootModules.length} root`);
+
+    router.mountModules(rootModules);
     router.mountErrorHandlers(m.get('error'));
 
     var brk = Object.create(brick);

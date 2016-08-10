@@ -24,6 +24,9 @@ describe('module', function() {
             '/standard/view.html': 'foo',
             '/standard/router.js': 'this will not read by require'
         });
+        mockRequire('/foo/router.js', {
+            url: '/'
+        });
         mockRequire('/standard/router.js', {
             url: '',
             get: function() {}

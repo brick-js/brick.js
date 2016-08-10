@@ -10,6 +10,11 @@ const mockFs = require('mock-fs');
 
 describe('parser', function() {
     beforeEach(function() {
+        mockFs({
+            '/foo/index.html': '',
+            '/bar/view.html': '',
+            '/router.js': ''
+        });
         mockRequire('/package.json', {
             "name": "sample-module",
             "version": "1.0.0",
@@ -19,10 +24,6 @@ describe('parser', function() {
         mockRequire('/router.js', {
             url: '/foo',
             get: function() {}
-        });
-        mockFs({
-            '/foo/index.html': '',
-            '/bar/view.html': ''
         });
     });
     afterEach(function() {

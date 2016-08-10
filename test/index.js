@@ -4,7 +4,7 @@ const mockFs = require('mock-fs');
 const mockRequire = require('mock-require');
 const debug = require('debug')('test:index');
 
-describe('express', function() {
+describe('index', function() {
     var server, req;
     afterEach(function(done) {
         server && server.close(done);

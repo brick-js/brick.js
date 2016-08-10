@@ -13,8 +13,6 @@ module.exports = function() {
     var module = {
         // @return: Promise<HTML>
         render: function(req, res, ctx, method) {
-            debug(`rendering ${this.id}`);
-
             var renderById = _.partialRight(doRenderById, req, res);
             return this.context(req, res, ctx, method)
                 .then(ctx => {
@@ -24,12 +22,18 @@ module.exports = function() {
 
         // @return: Promise<ctx>
         context: function(req, res, parentCtx, method) {
-            var router = this.router[method || 'get'];
+            method = method || 'get';
+            var router = this.router[method];
 
             parentCtx = _.assign({}, parentCtx, res.locals);
+
+            //debug(`[router.js calling] ${this.id} ${method}`);
             return router(req, res, parentCtx)
+                .then(x => {
+                    //debug(`[router.js returned] ${this.id} ${method}`);
+                    return x;
+                })
                 .then(ctx => {
-                    debug(ctx, parentCtx, req.app.locals);
                     ctx = _.assign({}, req.app.locals, parentCtx, ctx);
                     return ctx;
                 });
@@ -37,14 +41,19 @@ module.exports = function() {
     };
 
     function doRenderById(mid, ctx, req, res) {
+        //debug(`[pctrl requested] ${mid}`);
         var mod = get(mid);
-        assert(mod, `module ${mid} not found`);
+        assert(mod, `[pctrl error] ${mid} not found`);
 
-        return mod.render(req, res, ctx);
+        return mod.render(req, res, ctx)
+            .then(x => {
+                //debug(`[pctrl returned] ${mid}`);
+                return x;
+            });
     }
 
     function loadModule(mpath, config) {
-        debug(`loading ${mpath}`);
+        //debug(`loading ${mpath}`);
 
         var mod = Object.create(module);
         var pkg = parser.parsePackageFile(path.resolve(mpath, 'package.json'));

@@ -17,8 +17,8 @@ function get(ext) {
         var engine = engines[ext];
         assert(engine, `engine for ${ext} not found`);
         var pmodularize = _.partial(modularize, modName);
-        return engine
-            .render(tplPath, ctx, pmodularize, pctrl);
+        //debug(`[calling engine] ${tplPath}`);
+        return engine.render(tplPath, ctx, pmodularize, pctrl);
     };
 }
 
