@@ -11,8 +11,29 @@ function Router(config) {
     });
 }
 
-Router.prototype.get = function() {
+Router.prototype.express = function() {
     return this.expressRouter;
+};
+
+Router.prototype.expressCatch404 = function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+};
+
+Router.prototype.expressErrorHandler = function(errorModule) {
+    // customized error page
+    return function(err, req, res, next) {
+        debug('finding customized error page');
+        if (!errorModule) return next(err); // apply default error handler
+
+        debug('rendering customized error page');
+        errorModule.render(req, res, {
+                error: err
+            })
+            .then(html => http.html(res, html))
+            .catch(next);
+    };
 };
 
 Router.prototype.mountModules = function(modules) {
@@ -34,34 +55,6 @@ Router.prototype.doMountModule = function(mod, method) {
     router(mod.router.url, (req, res, next) => mod.render(req, res, {}, method)
         .then(html => http.html(res, html))
         .catch(next));
-};
-
-Router.prototype.mountErrorHandlers = function(errorModule) {
-    this.expressRouter.use(function(req, res, next) {
-        var err = new Error('Not Found');
-        err.status = 404;
-        next(err);
-    });
-
-    // customized error page
-    this.expressRouter.use(function(err, req, res, next) {
-        debug('finding customized error page');
-        if (!errorModule) return next(err); // apply default error handler
-
-        debug('rendering customized error page');
-        errorModule.render(req, res, {
-                error: err
-            })
-            .then(html => http.html(res, html))
-            .catch(next);
-    });
-
-    // default error handler
-    this.expressRouter.use(function(err, req, res, next) {
-        console.error(err.stack || err);
-        var html = `<pre><code>${err.stack}</code></pre>`;
-        http.html(res, html, err.status || 500);
-    });
 };
 
 module.exports = config => new Router(config);

@@ -21,11 +21,16 @@ module.exports = function(cfg) {
     debug(`found ${modules.length} modules, ${rootModules.length} root`);
 
     router.mountModules(rootModules);
-    router.mountErrorHandlers(m.get('error'));
 
     var brk = Object.create(brick);
     brk.root = cfg.root;
-    brk.express = router.get();
+    brk.express = router.express();
+    brk.expressCatch404 = router.expressCatch404;
+    brk.expressErrorHandler = function(conf) {
+        conf = conf || {};
+        var mod = conf.brick || 'error';
+        return router.expressErrorHandler(m.get(mod));
+    };
 
     return brk;
 };

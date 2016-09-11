@@ -63,6 +63,9 @@ describe('index', function() {
         it('should use error brick when Error occured', function(done) {
             req.post('/nothing').expect(403, 'auth failed', done);
         });
+        it('should capture errors before brick.express', function(done) {
+            req.get('/api-err').expect(403, 'auth failed', done);
+        });
     });
     describe('router.js', function() {
         beforeEach(function(){

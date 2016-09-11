@@ -17,6 +17,13 @@ exports.server = function(cfg) {
 
     var brick = Brick(cfg);
     app.get('/', (req, res) => res.send('Hello World!'));
+    app.get('/api-err', (req, res) => {
+        throw 'throwed before brick.express';
+    });
     app.use(brick.express);
+    app.use(brick.expressCatch404);
+    app.use(brick.expressErrorHandler({
+        brick: 'error'
+    }));
     return app.listen(3202);
 };
