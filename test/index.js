@@ -24,8 +24,9 @@ describe('index', function() {
                 url: "/main"
             });
             mockRequire('/bricks/post/router.js', {
-                url: "/post",
-                post: (req, res) => res.render()
+                url: ["/post", '/put'],
+                post: (req, res) => res.render(),
+                put: (req, res) => { throw 'xxx'; }
             });
             server = stubs.server({
                 root: '/bricks'
@@ -44,6 +45,9 @@ describe('index', function() {
         });
         it('should respond 200 to /post POST', function(done) {
             req.post('/post').expect(200, 'post', done);
+        });
+        it('should respond 500 to /put PUT', function(done) {
+            req.put('/put').expect(500, 'xxx\n', done);
         });
     });
     describe('error brick', function(){
