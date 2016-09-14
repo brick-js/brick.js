@@ -3,7 +3,8 @@
 [![NPM version](https://img.shields.io/npm/v/brick.js.svg?style=flat)](https://www.npmjs.org/package/brick.js)
 [![Build Status](https://travis-ci.org/brick-js/brick.js.svg?branch=master)](https://travis-ci.org/brick-js/brick.js)
 [![Coverage Status](https://coveralls.io/repos/github/brick-js/brick.js/badge.svg?branch=master)](https://coveralls.io/github/brick-js/brick.js?branch=master)
-[![Dependency manager](https://david-dm.org/brick-js/brick.js.png)](https://david-dm.org/brick-js/brick.js)
+[![Dependency manager](https://img.shields.io/david/dev/brick-js/brick.js.svg?style=flat)](https://david-dm.org/brick-js/brick.js)
+ 
 
 Scalable Web Development, One Brick at a Time!
 
