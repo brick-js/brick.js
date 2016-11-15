@@ -25,7 +25,7 @@ module.exports = function() {
             method = method || 'get';
             var router = this.router[method];
 
-            parentCtx = _.assign({}, parentCtx, res.locals);
+            parentCtx = _.assign({}, res.locals, parentCtx);
 
             //debug(`[router.js calling] ${this.id} ${method}`);
             return router(req, res, parentCtx)
