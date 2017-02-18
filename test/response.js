@@ -16,7 +16,4 @@ describe('response', function() {
         response.status(404);
         expect(res.status).to.have.been.called;
     });
-    it('status should return response', function(){
-        expect(response.status(404)).to.equal(response);
-    });
 });
