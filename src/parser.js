@@ -54,7 +54,10 @@ function exists(file) {
 function parseController(ctrl, path) {
     if (!ctrl) return undefined;
     return (req, res, ctx) => (new BPromise((resolve, reject) => {
-        var proxy = _.clone(res);
+        var proxy = {};
+        _.forIn(res, (val, key) => {
+            proxy[key] = (typeof val === 'function') ? val.bind(res) : val;
+        });
         proxy.locals = ctx;
         proxy.render = function(context) {
             debug(`res.render called for ${path}, resolving context...`);
