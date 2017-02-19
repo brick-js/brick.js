@@ -1,10 +1,7 @@
 const Path = require('path');
-const Response = require('./response.js');
-const assert = require('assert');
 const fs = require('fs');
 const _ = require('lodash');
 const debug = require('debug')('brick:parser');
-const httpStatusMsg = require('./http-status.json');
 const BPromise = require('bluebird');
 
 function parseTemplate(path, pkg) {
@@ -57,15 +54,13 @@ function exists(file) {
 function parseController(ctrl, path) {
     if (!ctrl) return undefined;
     return (req, res, ctx) => (new BPromise((resolve, reject) => {
-        var proxy = Response.create(res, {
-            locals: ctx,
-            app: res.app,
-            headersSent: res.headersSent,
-            render: function(context) {
-                context = _.assign({}, proxy.locals, context);
-                resolve(context);
-            }
-        });
+        var proxy = _.clone(res);
+        proxy.locals = ctx;
+        proxy.render = function(context) {
+            debug(`res.render called for ${path}, resolving context...`);
+            context = _.assign({}, proxy.locals, context);
+            resolve(context);
+        };
         ctrl(req, proxy, reject);
     }));
 }
@@ -79,5 +74,9 @@ function normalize(id) {
 }
 
 module.exports = {
-    normalize, parseController, parseTemplate, parsePackageFile, parseRouter
+    normalize,
+    parseController,
+    parseTemplate,
+    parsePackageFile,
+    parseRouter
 };

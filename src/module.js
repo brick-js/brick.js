@@ -16,7 +16,12 @@ module.exports = function() {
             var renderById = _.partialRight(doRenderById, req, res);
             return this.context(req, res, ctx, method)
                 .then(ctx => {
+                    debug(`context for ${this.id} retrieved, calling renderer...`);
                     return this.renderer(this.template, ctx, renderById, this.id);
+                })
+                .then(html => {
+                    debug(`renderer returned for ${this.id}`);
+                    return html;
                 });
         },
 
@@ -27,10 +32,10 @@ module.exports = function() {
 
             parentCtx = _.assign({}, res.locals, parentCtx);
 
-            //debug(`[router.js calling] ${this.id} ${method}`);
+            debug(`[calling router] ${this.id} ${method}`);
             return router(req, res, parentCtx)
                 .then(x => {
-                    //debug(`[router.js returned] ${this.id} ${method}`);
+                    debug(`[ctx returned from router] ${this.id} ${method}`);
                     return x;
                 })
                 .then(ctx => {

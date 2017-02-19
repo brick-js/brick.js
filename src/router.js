@@ -53,8 +53,12 @@ Router.prototype.doMountModule = function(mod, method) {
 
     router = this.expressRouter[method].bind(this.expressRouter);
     router(mod.router.url, (req, res, next) => mod.render(req, res, {}, method)
+        .then(html => {
+            debug('module render complete', html && html.length);
+            return html;
+        })
         .then(html => http.html(res, html))
-        .catch(next));
+        .catch(err => next(err)));
 };
 
 module.exports = config => new Router(config);
